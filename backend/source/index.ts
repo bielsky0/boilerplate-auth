@@ -1,16 +1,7 @@
-import express from "express";
-import { createClient } from "redis";
+import { server } from "./server";
 
-import { bootstrap } from "./config";
-
-const client = createClient({
-  url: process.env.REDIS_URL,
-});
-
-client.on("connect", function () {
-  console.log("Redis plugged in.");
-});
-
-client.on("error", (err) => console.log("Redis Client Error", err));
-
-bootstrap();
+(async () => {
+  server.listen(process.env.PORT, () => {
+    console.log(`Web application is listening on port ${process.env.PORT}`);
+  });
+})();
