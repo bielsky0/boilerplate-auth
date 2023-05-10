@@ -4,7 +4,13 @@ COPY backend/package.json ./
 COPY backend/yarn.lock ./
 
 RUN yarn install
+
+COPY /backend/prisma ./prisma/
+
 COPY ./backend ./
 
+RUN npx prisma generate
+
 EXPOSE 5000
+
 CMD [ "yarn", "run", "dev" ]
