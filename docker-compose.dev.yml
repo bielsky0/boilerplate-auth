@@ -8,7 +8,7 @@ services:
     volumes:
       - postgresDB:/data/postgres
     env_file:
-      - ./backend/.env.dev
+      - ./backend/.env
 
   pgadmin:
     image: dpage/pgadmin4
@@ -27,19 +27,20 @@ services:
   backend:
     container_name: backend
     # network_mode: bridge
+    command: ./start.sh postgres:5432
     networks:
       - default
     stdin_open: true
     build:
       context: .
-      dockerfile: backend/Dockerfile.dev
+      dockerfile: backend/Dockerfile
     volumes:
       - ./backend:/app
       - /app/node_modules/
     ports:
       - "5000:5000"
     env_file:
-      - ./backend/.env.dev
+      - ./backend/.env
     depends_on:
       - postgres
     restart: unless-stopped

@@ -24,11 +24,11 @@ export const makeCreateUser = ({
     await validate(command);
 
     const { create } = userRepository;
-    // const { hashPassword } = authService;
+    const { hashPassword } = authService;
 
-    // const hashedPass = await hashPassword(command.password);
+    const hashedPass = await hashPassword(command.password);
 
-    const user = new User({ ...command });
+    const user = new User({ ...command, password: hashedPass });
 
     return await create(user);
   };
