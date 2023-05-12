@@ -18,7 +18,6 @@ export function makeApp(dependencies: Dependencies) {
   });
 
   app.use(router);
-
   middlewares.onResponse({ app, dependencies });
 
   return app;

@@ -5,7 +5,7 @@ COPY backend/yarn.lock ./
 
 RUN yarn install
 
-COPY /backend/prisma ./prisma/
+COPY /backend/source/infrastructure/database/prisma ./source/infrastructure/database/prisma/
 
 COPY ./backend ./
 

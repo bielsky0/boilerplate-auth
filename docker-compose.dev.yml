@@ -27,7 +27,7 @@ services:
   backend:
     container_name: backend
     # network_mode: bridge
-    command: ./start.sh postgres:5432
+    command: ./start.sh
     networks:
       - default
     stdin_open: true
