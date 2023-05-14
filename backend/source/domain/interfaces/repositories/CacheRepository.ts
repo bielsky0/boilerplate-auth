@@ -1,6 +1,6 @@
 export interface CacheRepository {
-  set<T>(key: string, value: T): Promise<void>;
-  get<T>(key: string): Promise<T>;
-  connect(): Promise<void>;
-  quit(): Promise<void>;
+  set(key: string, value: string): Promise<void>;
+  setEx(key: string, seconds: number, value: string): Promise<void>;
+
+  get(key: string): Promise<string | null>;
 }
