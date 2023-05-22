@@ -10,13 +10,23 @@ export const makeCacheRepository = ({
 }: MakeCacheRepositoryDependencies): CacheRepository => {
   return {
     set: async (key: string, value: string) => {
+      await db.connect();
       await db.set(key, value);
+      await db.quit();
     },
     get: async (key: string) => {
-      return await db.get(key);
+      await db.connect();
+
+      const data = await db.get(key);
+      await db.quit();
+
+      return data;
     },
     setEx: async (key, seconds, value) => {
+      await db.connect();
+
       await db.setEx(key, seconds, value);
+      await db.quit();
     },
   };
 };

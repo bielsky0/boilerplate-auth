@@ -1,17 +1,13 @@
-import { AuthService } from "@domain/interfaces";
-
-export interface CryptoService {
-  genSalt(rounds: number): Promise<string>;
-  hash(pass: string, salt: string): Promise<string>;
-  compare(plainPass: string, hashedPass: string): Promise<boolean>;
-}
+import { AuthService, CryptoService, JwtService } from "@domain/interfaces";
 
 export type MakeAuthServiceDependencies = {
   cryptoService: CryptoService;
+  jwtService: JwtService;
 };
 
 export const makeAuthService = ({
   cryptoService,
+  jwtService,
 }: MakeAuthServiceDependencies): AuthService => {
   return {
     hashPassword: async (password) => {
@@ -21,6 +17,12 @@ export const makeAuthService = ({
     },
     comparePassword: async (plainPassword: string, hashedPassword: string) => {
       return await cryptoService.compare(plainPassword, hashedPassword);
+    },
+    verifyJwt: (token, secret) => {
+      return jwtService.verify(token, secret);
+    },
+    signJwt: (token, secret, options) => {
+      return jwtService.sign(token, secret, options);
     },
   };
 };

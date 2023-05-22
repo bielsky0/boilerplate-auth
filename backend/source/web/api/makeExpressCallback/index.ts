@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { Response as ControllerResponse } from "../controllers/userController";
+import { Response as ControllerResponse } from "../controllers/user/createUserController";
 
 export type Controller = (httpRequest: any) => Promise<ControllerResponse>;
 
@@ -12,6 +12,7 @@ export const makeExpressCallback = (controller: Controller) => {
       ip: req.ip,
       method: req.method,
       path: req.path,
+      cookies: req.cookies,
       headers: {
         "Content-Type": req.get("Content-Type"),
         Referer: req.get("referer"),
@@ -19,10 +20,17 @@ export const makeExpressCallback = (controller: Controller) => {
       },
     };
 
+    console.log(req.cookies);
+
     controller(httpRequest)
       .then((httpResponse) => {
         if (httpResponse.headers) {
           res.set(httpResponse.headers);
+        }
+        if (httpResponse.cookies) {
+          console.log(httpResponse.cookies);
+          const { name, val, options } = httpResponse.cookies;
+          res.cookie(name, val, options);
         }
         res.type("json");
         res.status(httpResponse.statusCode).send(httpResponse.body);

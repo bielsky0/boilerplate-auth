@@ -9,6 +9,9 @@ export function makeApplication(): Dependencies {
   const InfrastructureDependencies = makeInfrastructure();
 
   return {
-    users: makeUsers(InfrastructureDependencies.userRepository),
+    users: makeUsers(
+      InfrastructureDependencies.userRepository,
+      InfrastructureDependencies.cacheRepository
+    ),
   };
 }

@@ -1,10 +1,18 @@
 import { Dependencies } from "@application/di";
+
+import { CookieOptions } from "express";
+
 export type Response = {
   headers: {
     [key: string]: string;
   };
   body: any;
   statusCode: number;
+  cookies?: {
+    name: string;
+    val: string;
+    options: CookieOptions;
+  };
 };
 
 export const makeCreateUserController = (dependencies: Dependencies) => {

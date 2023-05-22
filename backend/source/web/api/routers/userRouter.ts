@@ -5,11 +5,9 @@ import {
   NextFunction,
 } from "express";
 import { Controller } from "../makeExpressCallback";
-import {
-  Response,
-  makeCreateUserController,
-} from "../controllers/userController";
+import { makeCreateUserController } from "../controllers/user/createUserController";
 import { Dependencies } from "@web/crosscutting/container";
+import { makeLoginUserController } from "../controllers/user/loginUserController";
 
 export type MakeCallback = (
   controller: Controller
@@ -25,8 +23,10 @@ export const userRouter = ({
   makeCallback: MakeCallback;
 }) => {
   const createUserController = makeCreateUserController(dependencies);
+  const loginUserController = makeLoginUserController(dependencies);
 
   router.post(`/user`, makeCallback(createUserController));
+  router.post("/login", makeCallback(loginUserController));
 
   return router;
 };
