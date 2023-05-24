@@ -28,5 +28,24 @@ export const makeCacheRepository = ({
       await db.setEx(key, seconds, value);
       await db.quit();
     },
+    lpush: async (key, values) => {
+      await db.connect();
+      await db.lPush(key, values);
+      await db.quit();
+    },
+    lrange: async (key, start, stop) => {
+      await db.connect();
+
+      const data = await db.lRange(key, start, stop);
+      await db.quit();
+
+      return data;
+    },
+    del: async (keys) => {
+      await db.connect();
+      const data = await db.del(keys);
+      await db.quit();
+      return data;
+    },
   };
 };

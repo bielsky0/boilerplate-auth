@@ -12,7 +12,7 @@ export type Response = {
     name: string;
     val: string;
     options: CookieOptions;
-  };
+  }[];
 };
 
 export const makeCreateUserController = (dependencies: Dependencies) => {

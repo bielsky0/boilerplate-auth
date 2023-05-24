@@ -20,17 +20,15 @@ export const makeExpressCallback = (controller: Controller) => {
       },
     };
 
-    console.log(req.cookies);
-
     controller(httpRequest)
       .then((httpResponse) => {
         if (httpResponse.headers) {
           res.set(httpResponse.headers);
         }
         if (httpResponse.cookies) {
-          console.log(httpResponse.cookies);
-          const { name, val, options } = httpResponse.cookies;
-          res.cookie(name, val, options);
+          httpResponse.cookies.forEach(({ name, val, options }) => {
+            res.cookie(name, val, options);
+          });
         }
         res.type("json");
         res.status(httpResponse.statusCode).send(httpResponse.body);
