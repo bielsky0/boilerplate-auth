@@ -17,6 +17,7 @@ export function makeHandleException() {
     response: Response,
     _: NextFunction
   ) {
+    console.log(error.message);
     let exception: ExceptionResponse | null = null;
 
     switch (error.constructor) {

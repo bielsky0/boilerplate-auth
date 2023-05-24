@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 import { CacheRepository, UserReposiotry } from "@domain/interfaces";
 import { makeAuthService } from "@application/services";
 
-import { validate } from "./add/addUserValidator";
+import { validate as addUserValidate } from "./add/addUserValidator";
+import { validate as loginUserValidate } from "./login/loginUserValidator";
 import { makeCreateUser } from "./add/addUser";
 import { makeLoginUser } from "./login";
 
@@ -23,10 +24,11 @@ export const makeUsers = (
   return {
     createUser: makeCreateUser({
       userRepository,
-      validate: validate,
+      validate: addUserValidate,
       authService,
     }),
     loginUser: makeLoginUser({
+      validate: loginUserValidate,
       userRepository,
       authService,
       cacheRepository,

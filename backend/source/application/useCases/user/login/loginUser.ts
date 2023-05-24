@@ -16,12 +16,14 @@ export type LoginUserCommand = Readonly<{
 export type MakeCreateUserDependencies = {
   userRepository: UserReposiotry;
   authService: AuthService;
+  validate: (command: LoginUserCommand) => Promise<void>;
   cacheRepository: CacheRepository;
 };
 
 export const makeLoginUser = ({
   userRepository,
   authService,
+  validate,
   cacheRepository,
 }: MakeCreateUserDependencies) => {
   return async (
@@ -35,6 +37,8 @@ export const makeLoginUser = ({
       body: { email, password },
       cookies,
     } = command;
+
+    await validate(command);
 
     const user = await userRepository.getByEmail(email);
 
