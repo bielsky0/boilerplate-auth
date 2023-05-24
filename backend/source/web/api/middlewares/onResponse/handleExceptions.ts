@@ -17,7 +17,6 @@ export function makeHandleException() {
     response: Response,
     _: NextFunction
   ) {
-    console.log(error.message);
     let exception: ExceptionResponse | null = null;
 
     switch (error.constructor) {
@@ -27,6 +26,10 @@ export function makeHandleException() {
       case Exceptions.ValidationException:
         exception = validationExceptionResponse(
           error as Exceptions.ValidationException
+        );
+      case Exceptions.UnauthorizedException:
+        exception = unauthorizedExceptionResponse(
+          error as Exceptions.UnauthorizedException
         );
         break;
       default:
@@ -64,6 +67,17 @@ function validationExceptionResponse(
     errors: error.errors,
     status: 400,
     title: "The request was invalid",
+    type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  };
+}
+
+function unauthorizedExceptionResponse({
+  message,
+}: Exceptions.UnauthorizedException): ExceptionResponse {
+  return {
+    ...(message && { detail: message }),
+    status: 403,
+    title: "Unauthorized",
     type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
   };
 }

@@ -1,3 +1,4 @@
+import { UnauthorizedException } from "@application/exceptions";
 import { User } from "@domain/entities/user";
 import {
   AuthService,
@@ -42,11 +43,12 @@ export const makeLoginUser = ({
 
     const user = await userRepository.getByEmail(email);
 
-    if (!user) throw new Error(`User with ${email} does not exists`);
+    if (!user)
+      throw new UnauthorizedException(`User with ${email} does not exists`);
 
     const match = await authService.comparePassword(password, user.password);
 
-    if (!match) throw new Error(`Password doesn't match`);
+    if (!match) throw new UnauthorizedException(`Password doesn't match`);
 
     const accessToken = authService.signJwt(
       { email: user.email },
