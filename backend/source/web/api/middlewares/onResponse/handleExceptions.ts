@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import * as Exceptions from "@application/exceptions";
-import { Dependencies } from "@web/crosscutting/container";
 
 type ExceptionResponse = {
   detail?: string; // A human-readable explanation specific to this occurrence of the problem.
@@ -76,7 +75,7 @@ function unauthorizedExceptionResponse({
 }: Exceptions.UnauthorizedException): ExceptionResponse {
   return {
     ...(message && { detail: message }),
-    status: 403,
+    status: 401,
     title: "Unauthorized",
     type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
   };

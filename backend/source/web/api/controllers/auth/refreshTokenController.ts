@@ -1,14 +1,14 @@
 import { Dependencies } from "@application/di";
-import { Response } from "./createUserController";
+import { Response } from "@web/api/controllers/user/createUserController";
 
-export const makeLoginUserController = (dependencies: Dependencies) => {
+export const makeRefreshController = (dependencies: Dependencies) => {
   return async (httpRequest: any): Promise<Response> => {
     const headers = {
       "Content-Type": "application/json",
     };
 
     const { user, accessToken, refreshToken } =
-      await dependencies.users.loginUser(httpRequest);
+      await dependencies.auth.loginUser(httpRequest);
 
     return {
       headers,

@@ -5,6 +5,8 @@ export type MakeAuthServiceDependencies = {
   jwtService: JwtService;
 };
 
+//TODO add error handling
+//TODO add generic typing for payload
 export const makeAuthService = ({
   cryptoService,
   jwtService,

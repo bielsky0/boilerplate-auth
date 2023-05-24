@@ -4,10 +4,11 @@ import {
   Response as ExpressResponse,
   NextFunction,
 } from "express";
-import { Controller } from "../makeExpressCallback";
-import { makeCreateUserController } from "../controllers/user/createUserController";
+
+import { Controller } from "@web/api/makeExpressCallback";
 import { Dependencies } from "@web/crosscutting/container";
-import { makeLoginUserController } from "../controllers/user/loginUserController";
+import { makeLoginUserController } from "@web/api/controllers/auth/loginUserController";
+import { makeCreateUserController } from "@web/api/controllers/user/createUserController";
 
 export type MakeCallback = (
   controller: Controller
