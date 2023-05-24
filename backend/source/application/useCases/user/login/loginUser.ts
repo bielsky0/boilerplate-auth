@@ -50,13 +50,13 @@ export const makeLoginUser = ({
 
     const accessToken = authService.signJwt(
       { email: user.email },
-      process.env.ACCES_TOKEN_SECRET || "shhhh",
+      `${process.env.ACCES_TOKEN_SECRET}`,
       { expiresIn: "10s" }
     );
 
     const newRefreshToken = authService.signJwt(
       { email: user.email },
-      process.env.REFRESH_TOKEN_SECRET || "shhhh",
+      `${process.env.REFRESH_TOKEN_SECRET}`,
       { expiresIn: "1d" }
     );
 
