@@ -10,8 +10,6 @@ export const makeLoginUserController = (dependencies: Dependencies) => {
     const { user, accessToken, refreshToken } =
       await dependencies.auth.loginUser(httpRequest);
 
-    const data = await dependencies.auth.refreshToken(httpRequest);
-
     return {
       headers,
       statusCode: 200,

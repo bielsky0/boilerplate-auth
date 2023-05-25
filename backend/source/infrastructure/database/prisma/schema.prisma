@@ -9,11 +9,12 @@ datasource db {
 }
 
 model User {
-  id       String       @id @default(uuid())
-  email    String       @unique
-  name     String?
-  password String
-  role     RoleEnumType @default(user)
+  id            String       @id @default(uuid())
+  email         String       @unique
+  name          String?
+  password      String
+  refreshTokens String[]
+  role          RoleEnumType @default(user)
 }
 
 enum RoleEnumType {

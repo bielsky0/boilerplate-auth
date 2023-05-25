@@ -18,7 +18,6 @@ export type MakeRefreshTokenDependencies = {
 export const makeRefreshToken = ({
   userRepository,
   authService,
-  cacheRepository,
 }: MakeRefreshTokenDependencies) => {
   return async (command: RefreshTokenCommand) => {
     const { cookies } = command;
@@ -28,11 +27,53 @@ export const makeRefreshToken = ({
 
     const oldRefreshToken = cookies.refresh_token;
 
-    const data = authService.verifyJwt(
-      oldRefreshToken,
-      `${process.env.REFRESH_TOKEN_SECRET}`
+    const foundUser = await userRepository.getUserByRefreshToken(
+      oldRefreshToken
     );
 
-    console.log("refresh_token", data);
+    if (!foundUser) {
+      const { email } = authService.verifyJwt(
+        oldRefreshToken,
+        `${process.env.REFRESH_TOKEN_SECRET}`
+      ) as { email: string };
+
+      await userRepository.updateRefreshTokensByEmail(email, []);
+
+      throw new InvalidTokenException("Detected refresh token reuse!");
+    }
+
+    const newRefreshTokenArray = foundUser.refreshTokens.filter(
+      (rt) => rt !== oldRefreshToken
+    );
+
+    const { email } = authService.verifyJwt(
+      oldRefreshToken,
+      `${process.env.REFRESH_TOKEN_SECRET}`
+    ) as { email: string };
+
+    if (email !== foundUser.email)
+      throw new InvalidTokenException("Decoded invalid email");
+
+    const accessToken = authService.signJwt(
+      { email: foundUser.email },
+      `${process.env.ACCES_TOKEN_SECRET}`,
+      { expiresIn: "10s" }
+    );
+
+    const newRefreshToken = authService.signJwt(
+      { email: foundUser.email },
+      `${process.env.REFRESH_TOKEN_SECRET}`,
+      { expiresIn: "1d" }
+    );
+
+    await userRepository.updateRefreshTokensByEmail(foundUser.email, [
+      ...newRefreshTokenArray,
+      newRefreshToken,
+    ]);
+
+    return {
+      accessToken: accessToken,
+      refreshToken: newRefreshToken,
+    };
   };
 };

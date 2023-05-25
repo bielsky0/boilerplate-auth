@@ -42,7 +42,6 @@ export const makeLoginUser = ({
     await validate(command);
 
     const user = await userRepository.getByEmail(email);
-
     if (!user)
       throw new UnauthorizedException(`User with ${email} does not exists`);
 
@@ -62,11 +61,9 @@ export const makeLoginUser = ({
       { expiresIn: "1d" }
     );
 
-    const refreshTokenFamily = await cacheRepository.lrange(user.email, 0, -1);
-
     let newRefreshTokenArray = !cookies?.refresh_token
-      ? refreshTokenFamily
-      : refreshTokenFamily.filter((rt) => rt === cookies.refresh_token);
+      ? user.refreshTokens
+      : user.refreshTokens.filter((rt) => rt !== cookies.refresh_token);
 
     if (cookies?.refresh_token) {
       /* 
@@ -76,20 +73,19 @@ export const makeLoginUser = ({
             3) If 1 & 2, reuse detection is needed to clear all RTs when user logs in
         */
 
-      const refreshToken = cookies?.refresh_token;
-
       // check if token is in token array
+      // check for multi device login support
+      // const check = user.refreshTokens.find((token) => token === refreshToken);
 
-      const check = refreshTokenFamily.find((token) => token === refreshToken);
-
-      if (!check) {
-        newRefreshTokenArray = [];
-        await cacheRepository.del([user.email]);
-      }
+      // if (!check) {
+      newRefreshTokenArray = [];
+      // await userRepository.del([user.email]);
+      //   console.log()
+      // }
       // if isn't clear cookies and token array
     }
 
-    await cacheRepository.lpush(user.email, [
+    await userRepository.updateRefreshTokensByEmail(user.email, [
       ...newRefreshTokenArray,
       newRefreshToken,
     ]);
