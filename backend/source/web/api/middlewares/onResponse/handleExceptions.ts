@@ -30,6 +30,8 @@ export function makeHandleException() {
         exception = unauthorizedExceptionResponse(
           error as Exceptions.UnauthorizedException
         );
+      case Exceptions.InvalidTokenException:
+        exception = invalidTokenExceptionResponse(error);
         break;
       default:
         exception = internalServerException();
@@ -77,6 +79,17 @@ function unauthorizedExceptionResponse({
     ...(message && { detail: message }),
     status: 401,
     title: "Unauthorized",
+    type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
+  };
+}
+
+function invalidTokenExceptionResponse({
+  message,
+}: Exceptions.UnauthorizedException): ExceptionResponse {
+  return {
+    ...(message && { detail: message }),
+    status: 403,
+    title: "Forbidden",
     type: "https://tools.ietf.org/html/rfc7231#section-6.5.1",
   };
 }

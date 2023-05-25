@@ -7,14 +7,15 @@ export const makeRefreshController = (dependencies: Dependencies) => {
       "Content-Type": "application/json",
     };
 
-    const { user, accessToken, refreshToken } =
-      await dependencies.auth.loginUser(httpRequest);
+    const { accessToken, refreshToken } = await dependencies.auth.refreshToken(
+      httpRequest
+    );
 
     return {
       headers,
       statusCode: 200,
       body: {
-        user,
+        accessToken: accessToken,
       },
       cookies: [
         {

@@ -6,5 +6,6 @@ export interface UserReposiotry {
   updateRefreshTokensByEmail: (
     email: string,
     refreshTokens: string[]
-  ) => Promise<User>;
+  ) => Promise<User | undefined>;
+  getUserByRefreshToken: (refreshToken: string) => Promise<User | null>;
 }

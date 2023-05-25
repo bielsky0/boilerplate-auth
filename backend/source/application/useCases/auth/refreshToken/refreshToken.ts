@@ -18,7 +18,6 @@ export type MakeRefreshTokenDependencies = {
 export const makeRefreshToken = ({
   userRepository,
   authService,
-  cacheRepository,
 }: MakeRefreshTokenDependencies) => {
   return async (command: RefreshTokenCommand) => {
     const { cookies } = command;
@@ -27,17 +26,54 @@ export const makeRefreshToken = ({
       throw new InvalidTokenException("Cant find refresh token in cookies");
 
     const oldRefreshToken = cookies.refresh_token;
-    // TODO find user by refresh_token
-    // if we don't find the user but we did recived refresh_token
-    // that means refresh_token been already used and deleted
-    // TODO make generic jwt
+
+    const foundUser = await userRepository.getUserByRefreshToken(
+      oldRefreshToken
+    );
+
+    if (!foundUser) {
+      const { email } = authService.verifyJwt(
+        oldRefreshToken,
+        `${process.env.REFRESH_TOKEN_SECRET}`
+      ) as { email: string };
+
+      await userRepository.updateRefreshTokensByEmail(email, []);
+
+      throw new InvalidTokenException("Detected refresh token reuse!");
+    }
+
+    const newRefreshTokenArray = foundUser.refreshTokens.filter(
+      (rt) => rt !== oldRefreshToken
+    );
+
     const { email } = authService.verifyJwt(
       oldRefreshToken,
       `${process.env.REFRESH_TOKEN_SECRET}`
     ) as { email: string };
 
-    const user = await userRepository.getByEmail(email);
+    if (email !== foundUser.email)
+      throw new InvalidTokenException("Decoded invalid email");
 
-    console.log("refresh_token", email);
+    const accessToken = authService.signJwt(
+      { email: foundUser.email },
+      `${process.env.ACCES_TOKEN_SECRET}`,
+      { expiresIn: "10s" }
+    );
+
+    const newRefreshToken = authService.signJwt(
+      { email: foundUser.email },
+      `${process.env.REFRESH_TOKEN_SECRET}`,
+      { expiresIn: "1d" }
+    );
+
+    await userRepository.updateRefreshTokensByEmail(foundUser.email, [
+      ...newRefreshTokenArray,
+      newRefreshToken,
+    ]);
+
+    return {
+      accessToken: accessToken,
+      refreshToken: newRefreshToken,
+    };
   };
 };

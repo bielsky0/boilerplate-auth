@@ -37,5 +37,14 @@ export function makeUserRepository({
         },
       });
     },
+    async getUserByRefreshToken(refreshToken) {
+      return await db.user.findFirst({
+        where: {
+          refreshTokens: {
+            has: refreshToken,
+          },
+        },
+      });
+    },
   };
 }
