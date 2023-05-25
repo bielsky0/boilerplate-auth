@@ -62,11 +62,11 @@ export const makeLoginUser = ({
       { expiresIn: "1d" }
     );
 
-    const refreshTokenFamily = await cacheRepository.lrange(user.email, 0, -1);
+    // const refreshTokenFamily = await cacheRepository.lrange(user.email, 0, -1);
 
     let newRefreshTokenArray = !cookies?.refresh_token
-      ? refreshTokenFamily
-      : refreshTokenFamily.filter((rt) => rt === cookies.refresh_token);
+      ? user.refreshTokens
+      : user.refreshTokens.filter((rt) => rt !== cookies.refresh_token);
 
     if (cookies?.refresh_token) {
       /* 
@@ -80,16 +80,19 @@ export const makeLoginUser = ({
 
       // check if token is in token array
 
-      const check = refreshTokenFamily.find((token) => token === refreshToken);
+      // check for multi device login support
+      // const check = user.refreshTokens.find((token) => token === refreshToken);
 
-      if (!check) {
-        newRefreshTokenArray = [];
-        await cacheRepository.del([user.email]);
-      }
+      // console.log(check, "check");
+      // if (!check) {
+      newRefreshTokenArray = [];
+      // await userRepository.del([user.email]);
+      //   console.log()
+      // }
       // if isn't clear cookies and token array
     }
 
-    await cacheRepository.lpush(user.email, [
+    await userRepository.updateRefreshTokensByEmail(user.email, [
       ...newRefreshTokenArray,
       newRefreshToken,
     ]);

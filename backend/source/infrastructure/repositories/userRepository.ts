@@ -27,5 +27,15 @@ export function makeUserRepository({
         },
       });
     },
+    async updateRefreshTokensByEmail(email: string, refreshTokens: string[]) {
+      return await db.user.update({
+        where: {
+          email: email,
+        },
+        data: {
+          refreshTokens: refreshTokens,
+        },
+      });
+    },
   };
 }

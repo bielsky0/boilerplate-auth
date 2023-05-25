@@ -1,7 +1,8 @@
 import express, { Router } from "express";
-import { Dependencies } from "../crosscutting/container";
-import { userRouter } from "./routers/userRouter";
-import { makeExpressCallback } from "./makeExpressCallback";
+
+import { Dependencies } from "@web/crosscutting/container";
+import { userRouter } from "@web/api/routers/userRouter";
+import { makeExpressCallback } from "@web/api/makeExpressCallback";
 
 import * as middlewares from "./middlewares";
 

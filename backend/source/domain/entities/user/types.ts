@@ -4,6 +4,7 @@ export interface UserInput {
   password: string;
   name: string | null;
   role: Role;
+  refreshTokens?: string[];
 }
 
 export const Role: { [x: string]: "user" | "admin" } = {

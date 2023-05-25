@@ -43,7 +43,9 @@ export const makeCacheRepository = ({
     },
     del: async (keys) => {
       await db.connect();
+
       const data = await db.del(keys);
+      console.log("data", data);
       await db.quit();
       return data;
     },
