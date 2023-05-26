@@ -77,11 +77,8 @@ export const makeLoginUser = ({
       // check for multi device login support
       // const check = user.refreshTokens.find((token) => token === refreshToken);
 
-      // if (!check) {
       newRefreshTokenArray = [];
-      // await userRepository.del([user.email]);
-      //   console.log()
-      // }
+
       // if isn't clear cookies and token array
     }
 

@@ -26,7 +26,11 @@ export const makeExpressCallback = (controller: Controller) => {
           res.set(httpResponse.headers);
         }
         if (httpResponse.cookies) {
-          httpResponse.cookies.forEach(({ name, val, options }) => {
+          httpResponse.cookies.toClear?.forEach(({ name, options }) => {
+            res.clearCookie(name, options);
+          });
+
+          httpResponse.cookies.toSet?.forEach(({ name, val, options }) => {
             res.cookie(name, val, options);
           });
         }

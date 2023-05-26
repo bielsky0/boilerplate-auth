@@ -17,22 +17,24 @@ export const makeRefreshController = (dependencies: Dependencies) => {
       body: {
         accessToken: accessToken,
       },
-      cookies: [
-        {
-          name: "refresh_token",
-          val: refreshToken,
-          options: {
-            httpOnly: false,
+      cookies: {
+        toSet: [
+          {
+            name: "refresh_token",
+            val: refreshToken,
+            options: {
+              httpOnly: false,
+            },
           },
-        },
-        {
-          name: "access_token",
-          val: accessToken,
-          options: {
-            httpOnly: false,
+          {
+            name: "access_token",
+            val: accessToken,
+            options: {
+              httpOnly: false,
+            },
           },
-        },
-      ],
+        ],
+      },
     };
   };
 };

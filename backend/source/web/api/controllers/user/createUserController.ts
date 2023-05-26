@@ -9,10 +9,16 @@ export type Response = {
   body: any;
   statusCode: number;
   cookies?: {
-    name: string;
-    val: string;
-    options: CookieOptions;
-  }[];
+    toSet?: {
+      name: string;
+      val: string;
+      options: CookieOptions;
+    }[];
+    toClear?: {
+      name: string;
+      options: CookieOptions;
+    }[];
+  };
 };
 
 export const makeCreateUserController = (dependencies: Dependencies) => {

@@ -16,22 +16,28 @@ export const makeLoginUserController = (dependencies: Dependencies) => {
       body: {
         user,
       },
-      cookies: [
-        {
-          name: "refresh_token",
-          val: refreshToken,
-          options: {
-            httpOnly: false,
+      cookies: {
+        toSet: [
+          {
+            name: "refresh_token",
+            val: refreshToken,
+            options: {
+              httpOnly: true,
+              secure: true,
+              maxAge: 24 * 60 * 60 * 1000,
+            },
           },
-        },
-        {
-          name: "access_token",
-          val: accessToken,
-          options: {
-            httpOnly: false,
+          {
+            name: "access_token",
+            val: accessToken,
+            options: {
+              httpOnly: true,
+              secure: true,
+              maxAge: 24 * 60 * 60 * 1000,
+            },
           },
-        },
-      ],
+        ],
+      },
     };
   };
 };
