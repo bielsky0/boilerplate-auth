@@ -31,7 +31,9 @@ export function makeHandleException() {
           error as Exceptions.UnauthorizedException
         );
       case Exceptions.InvalidTokenException:
-        exception = invalidTokenExceptionResponse(error);
+        exception = invalidTokenExceptionResponse(
+          error as Exceptions.InvalidTokenException
+        );
         break;
       default:
         exception = internalServerException();

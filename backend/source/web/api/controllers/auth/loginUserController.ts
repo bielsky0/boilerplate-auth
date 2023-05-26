@@ -22,14 +22,18 @@ export const makeLoginUserController = (dependencies: Dependencies) => {
             name: "refresh_token",
             val: refreshToken,
             options: {
-              httpOnly: false,
+              httpOnly: true,
+              secure: true,
+              maxAge: 24 * 60 * 60 * 1000,
             },
           },
           {
             name: "access_token",
             val: accessToken,
             options: {
-              httpOnly: false,
+              httpOnly: true,
+              secure: true,
+              maxAge: 24 * 60 * 60 * 1000,
             },
           },
         ],

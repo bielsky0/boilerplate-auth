@@ -14,7 +14,9 @@ export const makeLogoutController = (dependencies: Dependencies) => {
       statusCode: 204,
       body: {},
       cookies: {
-        toClear: [{ name: "refresh_token", options: { httpOnly: false } }],
+        toClear: [
+          { name: "refresh_token", options: { httpOnly: true, secure: true } },
+        ],
       },
     };
   };
