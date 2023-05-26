@@ -8,8 +8,8 @@ import { authRouter, userRouter } from "./routers";
 
 export function makeApp(dependencies: Dependencies) {
   const apiRoot = "/api/v1";
-  const baseRouter = Router();
   const app = express();
+  const baseRouter = Router();
 
   middlewares.onRequest({ app });
 
@@ -18,16 +18,15 @@ export function makeApp(dependencies: Dependencies) {
     router: baseRouter,
     makeCallback: makeExpressCallback,
   });
+  app.use(userR);
 
   const authR = authRouter({
     dependencies: dependencies,
     router: baseRouter,
     makeCallback: makeExpressCallback,
   });
-
-  app.use(userR);
   app.use(authR);
-  middlewares.onResponse({ app, dependencies });
 
+  middlewares.onResponse({ app, dependencies });
   return app;
 }

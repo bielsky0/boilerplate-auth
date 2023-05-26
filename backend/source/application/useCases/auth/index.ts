@@ -7,6 +7,7 @@ import { makeAuthService } from "@application/services";
 import { validate as loginUserValidate } from "@application/useCases/auth/login/loginUserValidator";
 import { makeLoginUser } from "@application/useCases/auth/login";
 import { makeRefreshToken } from "./refreshToken";
+import { makeLogout } from "./logout/logout";
 
 export const makeAuth = (
   userRepository: UserReposiotry,
@@ -31,6 +32,9 @@ export const makeAuth = (
       userRepository,
       authService,
       cacheRepository,
+    }),
+    logout: makeLogout({
+      userRepository,
     }),
   };
 };
