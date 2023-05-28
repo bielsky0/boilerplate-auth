@@ -32,27 +32,30 @@ export const makeRefreshToken = ({
     );
 
     if (!foundUser) {
-      const { email } = authService.verifyJwt(
-        oldRefreshToken,
-        `${process.env.REFRESH_TOKEN_SECRET}`
-      ) as { email: string };
+      try {
+        const { email } = (await authService.verifyJwt(
+          oldRefreshToken,
+          `${process.env.REFRESH_TOKEN_SECRET}`
+        )) as { email: string };
 
-      await userRepository.updateRefreshTokensByEmail(email, []);
+        await userRepository.updateRefreshTokensByEmail(email, []);
 
-      throw new InvalidTokenException("Detected refresh token reuse!");
+        throw new InvalidTokenException("Detected refresh token reuse!");
+      } catch (err) {
+        throw new InvalidTokenException("Detected refresh token reuse!");
+      }
     }
 
     const newRefreshTokenArray = foundUser.refreshTokens.filter(
       (rt) => rt !== oldRefreshToken
     );
 
-    const { email } = authService.verifyJwt(
-      oldRefreshToken,
-      `${process.env.REFRESH_TOKEN_SECRET}`
-    ) as { email: string };
-
-    if (email !== foundUser.email)
-      throw new InvalidTokenException("Decoded invalid email");
+    try {
+      await authService.verifyJwt(
+        oldRefreshToken,
+        `${process.env.REFRESH_TOKEN_SECRET}`
+      );
+    } catch (err) {}
 
     const accessToken = authService.signJwt(
       { email: foundUser.email },

@@ -1,6 +1,8 @@
 {
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts"],
   "exclude": ["node_modules"],
+  // "files": ["source/web/api/middlewares/index.d.ts"],
+  // "typeRoots": ["./node_modules/@types", "./source/web/api/middlewares/types.d.ts"],
 
   "compilerOptions": {
 

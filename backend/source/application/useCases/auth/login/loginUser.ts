@@ -25,7 +25,6 @@ export const makeLoginUser = ({
   userRepository,
   authService,
   validate,
-  cacheRepository,
 }: MakeCreateUserDependencies) => {
   return async (
     command: LoginUserCommand

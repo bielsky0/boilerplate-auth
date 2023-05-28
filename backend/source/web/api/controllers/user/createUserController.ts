@@ -26,6 +26,7 @@ export const makeCreateUserController = (dependencies: Dependencies) => {
     const headers = {
       "Content-Type": "application/json",
     };
+
     const newUser = await dependencies.users.createUser(httpRequest.body);
 
     return {
