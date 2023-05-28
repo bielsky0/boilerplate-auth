@@ -13,6 +13,7 @@ export const makeExpressCallback = (controller: Controller) => {
       method: req.method,
       path: req.path,
       cookies: req.cookies,
+      userEmail: req.userEmail,
       headers: {
         "Content-Type": req.get("Content-Type"),
         Referer: req.get("referer"),

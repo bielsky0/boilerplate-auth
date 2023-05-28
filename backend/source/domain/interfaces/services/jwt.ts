@@ -38,7 +38,11 @@ export type VerifyCallback = (
 ) => void;
 
 export interface JwtService {
-  verify(token: string, secretOrPrivateKey: string): Jwt | JwtPayload | string;
+  verify(
+    token: string,
+    secretOrPrivateKey: string,
+    callback: VerifyCallback
+  ): void;
   sign(
     payload: string | Buffer | object,
     secretOrPrivateKey: string,

@@ -1,4 +1,4 @@
-import { JwtPayload, Jwt } from "./jwt";
+import { JwtPayload, Jwt, VerifyCallback } from "./jwt";
 
 export type SignOptions = {
   expiresIn?: string | number | undefined;
@@ -15,5 +15,5 @@ export interface AuthService {
     secret: string,
     options?: SignOptions
   ): string;
-  verifyJwt(token: string, secret: string): string | Jwt | JwtPayload;
+  verifyJwt(token: string, secret: string): Promise<string | Jwt | JwtPayload>;
 }

@@ -1,7 +1,11 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { CacheRepository, UserReposiotry } from "@domain/interfaces";
+import {
+  AuthService,
+  CacheRepository,
+  UserReposiotry,
+} from "@domain/interfaces";
 import { makeAuthService } from "@application/services";
 
 import { validate as loginUserValidate } from "@application/useCases/auth/login/loginUserValidator";
@@ -9,18 +13,17 @@ import { makeLoginUser } from "@application/useCases/auth/login";
 import { makeRefreshToken } from "./refreshToken";
 import { makeLogout } from "./logout/logout";
 
-export const makeAuth = (
-  userRepository: UserReposiotry,
-  cacheRepository: CacheRepository
-) => {
-  const authService = makeAuthService({
-    cryptoService: bcrypt,
-    jwtService: {
-      sign: jwt.sign,
-      verify: jwt.verify,
-    },
-  });
+export type MakeAuthDependencies = {
+  userRepository: UserReposiotry;
+  authService: AuthService;
+  cacheRepository: CacheRepository;
+};
 
+export const makeAuth = ({
+  userRepository,
+  cacheRepository,
+  authService,
+}: MakeAuthDependencies) => {
   return {
     loginUser: makeLoginUser({
       validate: loginUserValidate,
