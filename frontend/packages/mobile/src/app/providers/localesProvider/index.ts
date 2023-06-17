@@ -1,0 +1,1 @@
+export { LocalesProvider } from "./localesProvider";
