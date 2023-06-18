@@ -14,7 +14,14 @@ export const App = () => {
       <Route element={<ValidRoutesProviders />}>
         <Route path={LANG_PREFIX}>
           <Route path={RoutesConfig.home} element={<XD />} />
-          <Route path="*" element={<Text>Not found</Text>} />
+          <Route
+            path="*"
+            element={
+              <View style={styles.container}>
+                <Text>Not found</Text>
+              </View>
+            }
+          />
         </Route>
       </Route>
 
