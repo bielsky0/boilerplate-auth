@@ -6,8 +6,18 @@ import { RoutesConfig, LANG_PREFIX } from "./config/routes";
 import { ValidRoutesProviders } from "./providers/validRoutesProviders/validRoutesProviders";
 import { DEFAULT_LOCALE } from "./config/i18n";
 
+import { io } from "socket.io-client";
+
+const socket = io("ws://localhost:5000");
+
 export const App = () => {
   const { pathname, search } = useLocation();
+  console.log("xddd");
+  socket.emit("new_game_handler", "new_game_handler");
+
+  socket.on("message", (d) => {
+    console.log(d);
+  });
 
   return (
     <Routes>

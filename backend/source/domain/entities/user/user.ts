@@ -1,5 +1,5 @@
 import { Role, UserInput } from "./types";
-
+//TODO change to private
 export class User {
   public id?: string;
   public name: string | null;
