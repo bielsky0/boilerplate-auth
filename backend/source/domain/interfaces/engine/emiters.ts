@@ -21,5 +21,6 @@ export interface Message {
 
 export type Payload = {
   roomId: string;
+  room: object;
   [key: string]: any;
 };

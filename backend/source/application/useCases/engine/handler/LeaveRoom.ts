@@ -16,6 +16,7 @@ export class LeaveGameHandler implements Handler {
       type: "game-xDDDDDDDDDDDDDDDD",
       payload: {
         roomId: "dasdasdasdas",
+        room: {},
         targets: players,
         message,
       },

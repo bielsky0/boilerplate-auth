@@ -28,16 +28,21 @@ export const makeIo = (
   });
 
   eventBus.subscribe((message) => {
-    message.payload.targets.forEach((id: string) => {
-      io.to(id).emit("message", {
-        type: message.type,
-        payload: message.payload,
+    try {
+      console.log(message);
+      message.payload.targets.forEach((id: string) => {
+        io.to(id).emit("rockPaperSicssors", {
+          type: message.type,
+          payload: message.payload,
+        });
       });
-    });
+    } catch (err) {
+      console.log(err);
+    }
   });
 
   io.on("connection", (socket) => {
-    socket.on("message", (message, callback) => {
+    socket.on("rockPaperSicssors", (message) => {
       try {
         handlers.handle({
           ...message,

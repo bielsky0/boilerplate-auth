@@ -14,6 +14,7 @@ export class UpdateRoomHandler implements Handler {
   }
 
   handle(message: HandlerMessage) {
+    console.log(message, "dasdasdasd");
     const index = rooms.findIndex(
       (room) => room.roomId === message.payload.roomId
     );
