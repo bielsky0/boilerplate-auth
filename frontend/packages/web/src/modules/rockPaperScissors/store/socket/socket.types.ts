@@ -12,11 +12,22 @@ export interface Message {
   type: HandlerType;
   payload: Payload;
 }
-type Room = {
-  [key: string]: any;
-};
+export interface Room {
+  id: string;
+  players: Player[];
+  vacant: boolean;
+  isPrivate: boolean;
+}
+
+export interface Player {
+  option: string | null;
+  isOptionPicked: boolean;
+  score: number;
+  id: string;
+}
+
 export type Payload = {
-  room: Room;
+  // room?: Room;
   [key: string]: any;
 };
 
@@ -30,7 +41,7 @@ export type ClientToServerEvents = {
 
 export type SocketState = {
   socket: Socket<ServerToClientEvents, ClientToServerEvents>;
-  room: Room;
+  room?: Room;
 };
 
 export type ActionMap<M extends { [index: string]: any }> = {

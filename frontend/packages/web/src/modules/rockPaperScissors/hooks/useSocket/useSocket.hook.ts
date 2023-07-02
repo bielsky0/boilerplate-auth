@@ -10,10 +10,10 @@ export const useSocket = () => {
     socketState: { socket, room },
     dispatch,
   } = context;
-
+  console.log(socket.id);
   useEffect(() => {
     const callback = (message: Message) => {
-      console.log(message);
+      console.log(message, "dasdasdadasds");
       dispatch({ type: SocketAction.SET_ROOM, payload: message.payload.room });
     };
 

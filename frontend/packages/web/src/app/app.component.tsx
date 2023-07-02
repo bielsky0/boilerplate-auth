@@ -15,7 +15,7 @@ export const App = () => {
         <Route path={LANG_PREFIX}>
           <Route path={RoutesConfig.home} element={<Home />} />
           <Route
-            path={RoutesConfig.rockPaperScissors}
+            path={RoutesConfig.rockPaperSicssors.index}
             element={<RockPaperScissors />}
           />
 

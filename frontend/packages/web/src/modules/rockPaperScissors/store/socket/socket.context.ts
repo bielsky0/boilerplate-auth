@@ -4,7 +4,7 @@ import { SocketActions, SocketState } from ".";
 
 export const initialState: SocketState = {
   socket: io("ws://localhost:5000"),
-  room: {},
+  room: undefined,
 };
 
 export const SocketContext = React.createContext<{
