@@ -1,3 +1,4 @@
+import { Room } from "@domain/entities/room/types";
 import { Subject } from "rxjs";
 
 export interface Emiters {
@@ -20,7 +21,5 @@ export interface Message {
 }
 
 export type Payload = {
-  roomId: string;
-  room: object;
   [key: string]: any;
 };

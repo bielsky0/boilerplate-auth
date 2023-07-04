@@ -1,5 +1,15 @@
 import { useContext, useEffect } from "react";
-import { Message, SocketAction, SocketContext } from "../../store";
+import { HandlerType, HandlerMessage, SocketContext } from "../../store";
+import {
+  RoomIsAvaiableHandler,
+  Handlers,
+  RoomIsFullHandler,
+  OpponnentDisconnectedHandler,
+  OpponnetReadydHandler,
+  RoundResultsdHandler,
+  StartGamedHandler,
+  StartRoundHandler,
+} from "../../store/socket/socket.handler";
 
 export const useSocket = () => {
   const context = useContext(SocketContext);
@@ -10,11 +20,24 @@ export const useSocket = () => {
     socketState: { socket, room },
     dispatch,
   } = context;
-  console.log(socket.id);
+
   useEffect(() => {
-    const callback = (message: Message) => {
-      console.log(message, "dasdasdadasds");
-      dispatch({ type: SocketAction.SET_ROOM, payload: message.payload.room });
+    const handlers = new Handlers({
+      [HandlerType.ROOM_IS_AVAILABLE]: new RoomIsAvaiableHandler(dispatch),
+      [HandlerType.OPPONENT_DISCONNECTED]: new OpponnentDisconnectedHandler(
+        dispatch
+      ),
+      [HandlerType.OPPONNET_READY]: new OpponnetReadydHandler(dispatch),
+      [HandlerType.ROUND_RESULTS]: new RoundResultsdHandler(dispatch),
+      [HandlerType.START_GAME]: new StartGamedHandler(dispatch),
+      [HandlerType.ROOM_IS_FULL]: new RoomIsFullHandler(dispatch),
+      [HandlerType.START_ROUND]: new StartRoundHandler(dispatch),
+    });
+
+    const callback = (message: HandlerMessage) => {
+      console.log("xDD");
+
+      handlers.handle(message);
     };
 
     socket.on("rockPaperSicssors", callback);
@@ -22,7 +45,7 @@ export const useSocket = () => {
     return () => {
       socket.off("rockPaperSicssors", callback);
     };
-  }, [socket]);
+  }, []);
 
   return { socket, room };
 };

@@ -5,21 +5,30 @@ import {
 } from "@domain/interfaces/engine/handlers";
 import { Subject } from "rxjs";
 
-import { rooms, players } from "./CreateRoom";
+import { rooms, sanitizeRoom } from "./AddToRoom";
 
 export class LeaveGameHandler implements Handler {
   eventBus: Subject<EmiterMessage>;
   handle(message: HandlerMessage) {
-    const index = players.indexOf(message.payload.socketId);
-    players.splice(index, 1);
-    this.eventBus.next({
-      type: "game-xDDDDDDDDDDDDDDDD",
-      payload: {
-        roomId: "dasdasdasdas",
-        room: {},
-        targets: players,
-        message,
-      },
+    const romms = rooms.filter(({ players }) => {
+      return players.some(({ id }) => id === message.payload.socketId);
+    });
+
+    romms.forEach(({ players }) => {
+      const index = players.indexOf(message.payload.socketId);
+      players.splice(index, 1);
+    });
+
+    romms.forEach((room) => {
+      this.eventBus.next({
+        type: "opponnentDisconnected",
+        payload: {
+          roomId: room.id,
+          room: sanitizeRoom(room),
+          targets: room.players,
+          message,
+        },
+      });
     });
   }
 

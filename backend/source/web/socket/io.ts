@@ -1,8 +1,10 @@
-import { CreateRoomHandler } from "@application/useCases/engine/handler/CreateRoom";
-import { JoinRoomHandler } from "@application/useCases/engine/handler/JoinRoom";
+import { AddToRoomHandler } from "@application/useCases/engine/handler/AddToRoom";
+import { FinishRoundHandler } from "@application/useCases/engine/handler/FinishRound";
+import { GameFinishedHandler } from "@application/useCases/engine/handler/GameFinished";
 import { LeaveGameHandler } from "@application/useCases/engine/handler/LeaveRoom";
-import { UpdateRoomHandler } from "@application/useCases/engine/handler/UpdateRoom";
+import { MadeAPickHandler } from "@application/useCases/engine/handler/MadeAPick";
 import { Handlers } from "@application/useCases/engine/handlers/handlers";
+import { Player } from "@domain/entities/player/types";
 import { Message } from "@domain/interfaces/engine/emiters";
 import { HandlerType } from "@domain/interfaces/engine/types";
 import { Dependencies } from "@web/crosscutting/container";
@@ -21,16 +23,18 @@ export const makeIo = (
   const eventBus = new Subject<Message>();
 
   const handlers = new Handlers({
-    [HandlerType.CREATE_ROOM]: new CreateRoomHandler(eventBus),
-    [HandlerType.JOIN_ROOM]: new JoinRoomHandler(eventBus),
+    [HandlerType.ADD_TO_ROOM]: new AddToRoomHandler(eventBus),
+    [HandlerType.FINISH_GAME]: new AddToRoomHandler(eventBus),
     [HandlerType.LEAVE_ROOM]: new LeaveGameHandler(eventBus),
-    [HandlerType.UPDATE_ROOM]: new UpdateRoomHandler(eventBus),
+    [HandlerType.REMOVE_PICK]: new AddToRoomHandler(eventBus),
+    [HandlerType.MADE_A_PICK]: new MadeAPickHandler(eventBus),
+    [HandlerType.FINISH_ROUND]: new FinishRoundHandler(eventBus),
   });
 
   eventBus.subscribe((message) => {
     try {
       console.log(message);
-      message.payload.targets.forEach((id: string) => {
+      message.payload.targets.forEach(({ id }: { id: string }) => {
         io.to(id).emit("rockPaperSicssors", {
           type: message.type,
           payload: message.payload,

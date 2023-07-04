@@ -2,41 +2,63 @@ import { ReactNode } from "react";
 import { Socket } from "socket.io-client";
 
 export enum HandlerType {
-  CREATE_ROOM = "createRoom",
-  LEAVE_ROOM = "leaveRoom",
-  JOIN_ROOM = "joinRoom",
-  UPDATE_ROOM = "updateRoom",
+  START_GAME = "startGame",
+  OPPONENT_DISCONNECTED = "opponnentDisconnected",
+  ROUND_RESULTS = "roundResult",
+  OPPONNET_READY = "opponentReady",
+  ROOM_IS_AVAILABLE = "roomIsAvailable",
+  ROOM_IS_FULL = "roomIsFull",
+  START_ROUND = "startRound",
 }
 
-export interface Message {
-  type: HandlerType;
-  payload: Payload;
+export enum EmiterType {
+  ADD_TO_ROOM = "addToRoom",
+  MADE_A_PICK = "madeAPick",
+  REMOVE_PICK = "removePick",
+  FINISH_GAME = "finishGame",
+  FINISH_ROUND = "finishRound",
 }
+
+export interface HandlerMessage {
+  type: HandlerType;
+  payload: {
+    room: Room;
+  };
+}
+
+export interface EmitterMessage {
+  type: EmiterType;
+  payload: EmiterPayload;
+}
+export type EmiterPayload = {
+  [key: string]: any;
+};
 export interface Room {
   id: string;
   players: Player[];
-  vacant: boolean;
-  isPrivate: boolean;
+  roomIsAvaible: true;
+  roundOver: boolean;
+  roundResults?: { verdict: string; opponentPick: string };
+  roomIsFull: boolean;
+  opponentReady: boolean;
 }
 
 export interface Player {
-  option: string | null;
   isOptionPicked: boolean;
   score: number;
   id: string;
 }
 
 export type Payload = {
-  // room?: Room;
-  [key: string]: any;
+  room: Room;
 };
 
 export type ServerToClientEvents = {
-  rockPaperSicssors: (message: Message) => void;
+  rockPaperSicssors: (message: HandlerMessage) => void;
 };
 
 export type ClientToServerEvents = {
-  rockPaperSicssors: (message: Message) => void;
+  rockPaperSicssors: (message: EmitterMessage) => void;
 };
 
 export type SocketState = {
@@ -60,7 +82,7 @@ export enum SocketAction {
 }
 
 export type SocketPayload = {
-  [SocketAction.SET_ROOM]: object;
+  [SocketAction.SET_ROOM]: Room;
 };
 
 export type SocketProviderProps = {
@@ -69,3 +91,16 @@ export type SocketProviderProps = {
 
 export type SocketActions =
   ActionMap<SocketPayload>[keyof ActionMap<SocketPayload>];
+
+export interface Handlers {
+  handlers: HandlersSet;
+  handle: (data: HandlerMessage) => void;
+}
+
+export type HandlersSet = {
+  [key in HandlerType]: Handler;
+};
+
+export interface Handler {
+  handle: (data: HandlerMessage) => void;
+}

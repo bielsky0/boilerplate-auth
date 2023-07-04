@@ -1,13 +1,16 @@
 export enum HandlerType {
-  CREATE_ROOM = "createRoom",
+  ADD_TO_ROOM = "addToRoom",
+  MADE_A_PICK = "madeAPick",
+  REMOVE_PICK = "removePick",
   LEAVE_ROOM = "leaveRoom",
-  JOIN_ROOM = "joinRoom",
-  UPDATE_ROOM = "updateRoom",
+  FINISH_GAME = "finishGame",
+  FINISH_ROUND = "finishRound",
 }
 
 export enum EmiterType {
-  CREATED_ROOM = "createdRoom",
-  LEFT_ROOM = "leftRoom",
-  JOINED_ROOM = "joinedRoom",
-  UPDATED_ROOM = "updatedRoom",
+  START_GAME = "startGame",
+  OPPONENT_DISCONNECTED = "opponnentDisconnected",
+  ROUND_RESULTS = "roundResults",
+  OPPONNET_READY = "opponentReady",
+  ROOM_IS_AVAILABLE = "roomIsAvailable",
 }
