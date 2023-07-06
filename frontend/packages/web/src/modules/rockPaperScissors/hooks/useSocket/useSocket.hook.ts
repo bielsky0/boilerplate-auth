@@ -35,8 +35,6 @@ export const useSocket = () => {
     });
 
     const callback = (message: HandlerMessage) => {
-      console.log("xDD");
-
       handlers.handle(message);
     };
 
