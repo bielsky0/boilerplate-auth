@@ -11,7 +11,7 @@ export interface Room {
   id: string;
   players: Player[];
   roomIsAvaible: boolean;
-  roundOver: boolean;
+  roundIsOver: boolean;
   roundResults?: { verdict: string; opponentPick: string };
   roomIsFull: boolean;
   opponentReady: boolean;
@@ -21,7 +21,7 @@ export interface SanitizeRoom {
   id: string;
   players: SanitizePlayer[];
   roomIsAvaible: boolean;
-  roundOver: boolean;
+  roundIsOver: boolean;
   roundResults?: { verdict: string; opponentPick: string };
   roomIsFull: boolean;
   opponentReady: boolean;

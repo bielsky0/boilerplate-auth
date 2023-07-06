@@ -37,7 +37,7 @@ export interface Room {
   id: string;
   players: Player[];
   roomIsAvaible: true;
-  roundOver: boolean;
+  roundIsOver: boolean;
   roundResults?: { verdict: string; opponentPick: string };
   roomIsFull: boolean;
   opponentReady: boolean;

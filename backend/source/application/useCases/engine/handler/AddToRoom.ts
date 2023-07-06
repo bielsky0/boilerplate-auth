@@ -40,7 +40,7 @@ export class AddToRoomHandler implements Handler {
         roomIsAvaible: true,
         roomIsFull: false,
         players: [],
-        roundOver: false,
+        roundIsOver: false,
         opponentReady: false,
         roundResults: {
           verdict: "tie",
