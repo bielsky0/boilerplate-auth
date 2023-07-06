@@ -12,7 +12,7 @@ export class Handlers implements HandlersAbs {
   }
 
   handle(message: Message) {
-    console.log(message);
+    console.log(message, "Handlers");
     if (!this.handlers[message.type]) {
       throw new Error("No handler for message");
     }

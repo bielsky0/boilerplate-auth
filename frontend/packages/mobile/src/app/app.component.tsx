@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 
 import { Routes, Route, useLocation, Navigate } from "react-router-native";
 import { RoutesConfig, LANG_PREFIX } from "./config/routes";
@@ -7,16 +7,15 @@ import { ValidRoutesProviders } from "./providers/validRoutesProviders/validRout
 import { DEFAULT_LOCALE } from "./config/i18n";
 
 import { io } from "socket.io-client";
+import { useState } from "react";
 
 const socket = io("ws://localhost:5000");
 
 export const App = () => {
   const { pathname, search } = useLocation();
-  console.log("xddd");
-  socket.emit("new_game_handler", "new_game_handler");
 
   socket.on("message", (d) => {
-    console.log(d);
+    console.log(d.payload.room);
   });
 
   return (
@@ -44,15 +43,47 @@ export const App = () => {
 };
 
 const XD = () => {
+  const [id, setId] = useState("");
+
   return (
     <View style={styles.container}>
       <Text>Open up App.tsx to start working on your app!</Text>
+      <Button
+        title="Create new room"
+        onPress={() => {
+          socket.emit("message", {
+            type: "new_game_handler",
+            payload: {
+              test: "test",
+            },
+          });
+        }}
+      ></Button>
+      <TextInput style={styles.input} value={id} onChangeText={setId} />
+      <Button
+        title="Join room"
+        onPress={() => {
+          socket.emit("message", {
+            type: "join_room_handler",
+            payload: {
+              roomId: id,
+            },
+          });
+        }}
+      ></Button>
+
       <StatusBar style="auto" />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",

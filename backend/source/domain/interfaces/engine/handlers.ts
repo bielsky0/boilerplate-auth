@@ -1,4 +1,6 @@
 import { Subject } from "rxjs";
+import { Message as EmiterMessage } from "./emiters";
+import { HandlerType } from "./types";
 
 export interface Handlers {
   handlers: HandlersSet;
@@ -6,17 +8,16 @@ export interface Handlers {
 }
 
 export type HandlersSet = {
-  [key: string]: Handler;
+  [key in HandlerType]: Handler;
 };
 
 export interface Handler {
-  eventBus: Subject<unknown>;
-  type: string;
+  eventBus: Subject<EmiterMessage>;
   handle: (data: Message) => void;
 }
 
 export interface Message {
-  type: string;
+  type: HandlerType;
   payload: Payload;
 }
 
