@@ -1,9 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import {
-  InvalidTokenException,
-  UnauthorizedException,
-} from "@application/exceptions";
+import { UnauthorizedException } from "@application/exceptions";
 import { AuthService } from "@domain/interfaces";
 
 export type MakeAuthMiddlewareDependencies = {
