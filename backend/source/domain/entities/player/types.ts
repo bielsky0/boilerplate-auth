@@ -6,7 +6,7 @@ export type PlayerInput = {
 };
 
 export interface Player {
-  option: string | null;
+  option: Pick | null;
   isOptionPicked: boolean;
   score: number;
   id: string;
@@ -16,4 +16,10 @@ export interface SanitizePlayer {
   isOptionPicked: boolean;
   score: number;
   id: string;
+}
+
+export enum Pick {
+  ROCK = "rock",
+  PAPER = "paper",
+  SCISSORS = "scissors",
 }

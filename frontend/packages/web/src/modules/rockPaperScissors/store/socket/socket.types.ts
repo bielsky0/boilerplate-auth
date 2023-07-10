@@ -49,6 +49,12 @@ export interface Player {
   id: string;
 }
 
+export enum Pick {
+  ROCK = "rock",
+  PAPER = "paper",
+  SCISSORS = "scissors",
+}
+
 export type Payload = {
   room: Room;
 };
