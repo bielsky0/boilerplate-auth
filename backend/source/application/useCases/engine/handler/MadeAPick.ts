@@ -6,11 +6,12 @@ import {
 import { Subject } from "rxjs";
 
 import { rooms, sanitizeRoom } from "./AddToRoom";
+import { Pick } from "@domain/entities/player/types";
 
 type Payload = {
   roomId: string;
   socketId: string;
-  pick: string;
+  pick: Pick;
 };
 export class MadeAPickHandler implements Handler {
   eventBus: Subject<EmiterMessage>;
@@ -37,17 +38,90 @@ export class MadeAPickHandler implements Handler {
       ({ isOptionPicked }) => isOptionPicked
     );
 
+    const [player1, player2] = rooms[index].players;
+
     if (check) {
-      const winner = rooms[index].players[0];
-      const loser = rooms[index].players[1];
-      winner.score += 1;
+      const weapons = {
+        rock: { weakTo: "paper", strongTo: "scissors" },
+        paper: { weakTo: "scissors", strongTo: "rock" },
+        scissors: { weakTo: "rock", strongTo: "paper" },
+      };
+
+      if (
+        player1.option &&
+        weapons[player1.option].strongTo === player2.option
+      ) {
+        // Player 1 won
+        player1.score += 1;
+
+        this.eventBus.next({
+          type: "roundResult",
+          payload: {
+            targets: [player1],
+            room: {
+              ...sanitizeRoom(rooms[index]),
+              roundResults: { verdict: "win", opponentPick: player2.option },
+            },
+          },
+        });
+
+        this.eventBus.next({
+          type: "roundResult",
+          payload: {
+            roundIsOver: true,
+            targets: [player2],
+            room: {
+              ...sanitizeRoom(rooms[index]),
+              roundResults: { verdict: "lose", opponentPick: player1.option },
+            },
+          },
+        });
+
+        return;
+      }
+
+      if (
+        player2.option &&
+        weapons[player2.option].strongTo === player1.option
+      ) {
+        // Player 2 won
+        player2.score += 1;
+
+        this.eventBus.next({
+          type: "roundResult",
+          payload: {
+            targets: [player2],
+            roundIsOver: true,
+            room: {
+              ...sanitizeRoom(rooms[index]),
+              roundResults: { verdict: "win", opponentPick: player1.option },
+            },
+          },
+        });
+
+        this.eventBus.next({
+          type: "roundResult",
+          payload: {
+            roundIsOver: true,
+            targets: [player1],
+            room: {
+              ...sanitizeRoom(rooms[index]),
+              roundResults: { verdict: "lose", opponentPick: player2.option },
+            },
+          },
+        });
+
+        return;
+      }
+
       this.eventBus.next({
         type: "roundResult",
         payload: {
-          targets: [winner],
+          targets: [player1],
+          roundIsOver: true,
           room: {
             ...sanitizeRoom(rooms[index]),
-            roundResults: { verdict: "win", opponentPick: loser.option },
+            roundResults: { verdict: "tie", opponentPick: player2.option },
           },
         },
       });
@@ -56,10 +130,10 @@ export class MadeAPickHandler implements Handler {
         type: "roundResult",
         payload: {
           roundIsOver: true,
-          targets: [loser],
+          targets: [player2],
           room: {
             ...sanitizeRoom(rooms[index]),
-            roundResults: { verdict: "lose", opponentPick: winner.option },
+            roundResults: { verdict: "tie", opponentPick: player1.option },
           },
         },
       });
