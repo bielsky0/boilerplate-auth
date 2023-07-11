@@ -31,6 +31,60 @@ export class FinishRoundHandler implements Handler {
       isOptionPicked: false,
     }));
 
+    const currentPlayer = rooms[index].players.find(
+      ({ id }) => id === payload.socketId
+    );
+
+    const isGameOver =
+      rooms[index].players.some(({ score }) => score >= 3) ||
+      rooms[index].isGameOver;
+
+    if (isGameOver) {
+      rooms[index].isGameOver = true;
+      if (currentPlayer) {
+        const isWinner = rooms[index].players.every(
+          ({ score }) => score < currentPlayer.score && currentPlayer.score >= 3
+        );
+
+        if (isWinner) {
+          rooms[index].players = rooms[index].players.filter(
+            ({ id }) => id !== currentPlayer.id
+          );
+          this.eventBus.next({
+            type: "finishGame",
+            payload: {
+              targets: [currentPlayer],
+              room: {
+                ...sanitizeRoom(rooms[index]),
+                roundIsOver: false,
+                isGameOver: true,
+              },
+              roomId: rooms[index].id,
+            },
+          });
+
+          return;
+        }
+        rooms[index].players = rooms[index].players.filter(
+          ({ id }) => id !== currentPlayer.id
+        );
+        this.eventBus.next({
+          type: "finishGame",
+          payload: {
+            targets: [currentPlayer],
+            room: {
+              ...sanitizeRoom(rooms[index]),
+              roundIsOver: false,
+              isGameOver: true,
+            },
+            roomId: rooms[index].id,
+          },
+        });
+
+        return;
+      }
+    }
+
     this.eventBus.next({
       type: "startRound",
       payload: {

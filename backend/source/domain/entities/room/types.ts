@@ -15,6 +15,7 @@ export interface Room {
   roundResults?: { verdict: string; opponentPick: string };
   roomIsFull: boolean;
   opponentReady: boolean;
+  isGameOver: boolean;
 }
 
 export interface SanitizeRoom {

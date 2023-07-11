@@ -164,3 +164,24 @@ export class StartRoundHandler implements Handler {
     console.log(message, "StartGamedHandler");
   }
 }
+
+export class FinishGameHandler implements Handler {
+  dispatch: React.Dispatch<SocketActions>;
+
+  constructor(dispatch: React.Dispatch<SocketActions>) {
+    this.dispatch = dispatch;
+  }
+
+  handle(message: HandlerMessage) {
+    this.dispatch({
+      type: SocketAction.SET_ROOM,
+      payload: {
+        ...message.payload.room,
+        roundIsOver: false,
+        isGameOver: true,
+      },
+    });
+
+    console.log(message, "FinishGameHandler");
+  }
+}
