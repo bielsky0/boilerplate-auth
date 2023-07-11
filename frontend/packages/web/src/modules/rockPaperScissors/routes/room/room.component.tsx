@@ -7,9 +7,7 @@ import { Player } from "../../components/player";
 export const Room = () => {
   const { id } = useParams<{ id: string }>();
   const { socket, room } = useSocket();
-  const isRoundOver = room?.players.every(
-    ({ isOptionPicked }) => isOptionPicked
-  );
+
   useEffect(() => {
     socket.emit("rockPaperSicssors", {
       type: EmiterType.ADD_TO_ROOM,
@@ -18,11 +16,10 @@ export const Room = () => {
       },
     });
   }, [socket]);
-
   useEffect(() => {
     let timeout: number;
 
-    if (isRoundOver) {
+    if (room && room.roundIsOver) {
       timeout = setTimeout(() => {
         socket.emit("rockPaperSicssors", {
           type: EmiterType.FINISH_ROUND,
@@ -44,11 +41,45 @@ export const Room = () => {
 
   if (room.roomIsFull) return <>room is full</>;
 
-  if (isRoundOver)
+  if (room.roundIsOver)
     return (
       <div>
+        <div
+          style={{
+            marginBottom: "32px",
+          }}
+        >
+          {JSON.stringify(room)}
+        </div>
+
         <h3>Round Over</h3>
         {JSON.stringify(room.roundResults)}
+      </div>
+    );
+
+  if (room.isGameOver)
+    return (
+      <div>
+        <div
+          style={{
+            marginBottom: "32px",
+          }}
+        >
+          {JSON.stringify(room)}
+        </div>
+
+        <button
+          onClick={() => {
+            socket.emit("rockPaperSicssors", {
+              type: EmiterType.ADD_TO_ROOM,
+              payload: {
+                roomId: id,
+              },
+            });
+          }}
+        >
+          PLAY AGAIN
+        </button>
       </div>
     );
 

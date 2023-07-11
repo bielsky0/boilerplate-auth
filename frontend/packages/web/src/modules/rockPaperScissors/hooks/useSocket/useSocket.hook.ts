@@ -9,6 +9,7 @@ import {
   RoundResultsdHandler,
   StartGamedHandler,
   StartRoundHandler,
+  FinishGameHandler,
 } from "../../store/socket/socket.handler";
 
 export const useSocket = () => {
@@ -32,6 +33,7 @@ export const useSocket = () => {
       [HandlerType.START_GAME]: new StartGamedHandler(dispatch),
       [HandlerType.ROOM_IS_FULL]: new RoomIsFullHandler(dispatch),
       [HandlerType.START_ROUND]: new StartRoundHandler(dispatch),
+      [HandlerType.FINISH_GAME]: new FinishGameHandler(dispatch),
     });
 
     const callback = (message: HandlerMessage) => {

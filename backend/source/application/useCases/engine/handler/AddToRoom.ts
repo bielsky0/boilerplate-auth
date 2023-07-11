@@ -41,6 +41,7 @@ export class AddToRoomHandler implements Handler {
         roomIsFull: false,
         players: [],
         roundIsOver: false,
+        isGameOver: false,
         opponentReady: false,
         roundResults: {
           verdict: "tie",
@@ -69,6 +70,8 @@ export class AddToRoomHandler implements Handler {
 
       return;
     }
+
+    rooms[index].isGameOver = false;
 
     if (rooms[index].players.length >= 2) {
       rooms[index].roomIsAvaible = false;

@@ -9,6 +9,7 @@ export enum HandlerType {
   ROOM_IS_AVAILABLE = "roomIsAvailable",
   ROOM_IS_FULL = "roomIsFull",
   START_ROUND = "startRound",
+  FINISH_GAME = "finishGame",
 }
 
 export enum EmiterType {
@@ -38,6 +39,7 @@ export interface Room {
   players: Player[];
   roomIsAvaible: true;
   roundIsOver: boolean;
+  isGameOver: boolean;
   roundResults?: { verdict: string; opponentPick: string };
   roomIsFull: boolean;
   opponentReady: boolean;
