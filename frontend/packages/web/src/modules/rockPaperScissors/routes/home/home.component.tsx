@@ -15,8 +15,9 @@ export const Home = () => {
         alignItems: "center",
         height: "100vh",
       }}
+      className="bg-slate-200"
     >
-      <h1>Rock paper scissors</h1>
+      <h1 className="text-slate-200">Rock paper scissors</h1>
 
       <div
         style={{
