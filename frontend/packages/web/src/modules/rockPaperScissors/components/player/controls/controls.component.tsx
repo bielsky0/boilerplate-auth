@@ -1,29 +1,34 @@
-import { FC } from "react";
-import { useSocket } from "../../../hooks";
-import { EmiterType, Pick } from "../../../store";
+import { FC } from 'react';
+import { useSocket } from '../../../hooks';
+import { EmiterType, Pick } from '../../../store';
 
 export type ControlsProps = {
   socketId: string;
 };
 
 export const Controls: FC<ControlsProps> = ({ socketId }) => {
-  const { socket, room } = useSocket();
+  const {
+    socket,
+    data: { room },
+    sentEvent,
+  } = useSocket();
   const currentPlayer = room?.players.find(({ id }) => id === socketId);
 
   if (!currentPlayer) return null;
-  // if (!room) return null;
 
   if (currentPlayer.isOptionPicked) return <div>picked</div>;
 
   if (!room) return null;
+
+  if (room.roomIsAvaible) return null;
 
   return (
     <div>
       <button
         disabled={socketId !== socket.id}
         onClick={() => {
-          socket.emit("rockPaperSicssors", {
-            type: EmiterType.MADE_A_PICK,
+          sentEvent({
+            type: EmiterType.MAKE_PICK,
             payload: {
               pick: Pick.ROCK,
               roomId: room?.id,
@@ -36,8 +41,8 @@ export const Controls: FC<ControlsProps> = ({ socketId }) => {
       <button
         disabled={socketId !== socket.id}
         onClick={() => {
-          socket.emit("rockPaperSicssors", {
-            type: EmiterType.MADE_A_PICK,
+          sentEvent({
+            type: EmiterType.MAKE_PICK,
             payload: {
               pick: Pick.PAPER,
               roomId: room?.id,
@@ -50,8 +55,8 @@ export const Controls: FC<ControlsProps> = ({ socketId }) => {
       <button
         disabled={socketId !== socket.id}
         onClick={() => {
-          socket.emit("rockPaperSicssors", {
-            type: EmiterType.MADE_A_PICK,
+          sentEvent({
+            type: EmiterType.MAKE_PICK,
             payload: {
               pick: Pick.SCISSORS,
               roomId: room?.id,

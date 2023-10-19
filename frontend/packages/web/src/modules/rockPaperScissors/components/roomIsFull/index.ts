@@ -1,0 +1,1 @@
+export { RoomIsFull } from './roomIsFull.component'

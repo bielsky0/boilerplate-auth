@@ -1,13 +1,16 @@
-import { FC } from "react";
-import { Controls } from "./controls";
-import { useSocket } from "../../hooks";
+import { FC } from 'react';
+import { Controls } from './controls';
+import { useSocket } from '../../hooks';
 
 export type PlayerProps = {
   socketId: string;
 };
 
 export const Player: FC<PlayerProps> = ({ socketId }) => {
-  const { room } = useSocket();
+  const {
+    data: { room },
+  } = useSocket();
+
   const currentPlayer = room?.players.find(({ id }) => id === socketId);
 
   if (!currentPlayer) return null;
@@ -15,14 +18,15 @@ export const Player: FC<PlayerProps> = ({ socketId }) => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
       }}
     >
-      <h1>Player: {socketId}</h1>
+      player
+      {/* <h1>Player: {socketId}</h1>
 
       <div>
         <h2>
@@ -30,7 +34,7 @@ export const Player: FC<PlayerProps> = ({ socketId }) => {
         </h2>
       </div>
 
-      <Controls socketId={socketId} />
+      <Controls socketId={socketId} /> */}
     </div>
   );
 };

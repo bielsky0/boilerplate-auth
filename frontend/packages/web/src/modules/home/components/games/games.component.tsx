@@ -1,6 +1,6 @@
-import { Game } from "../game";
-import { useGenerateLocalePath } from "../../../../shared/hooks/useGenerateLocalePath";
-import { RoutesConfig } from "../../../../app/config/routes";
+import { Game } from '../game';
+import { useGenerateLocalePath } from '../../../../shared/hooks/useGenerateLocalePath';
+import { RoutesConfig } from '../../../../app/config/routes';
 
 export const Games = () => {
   const generateLocalePath = useGenerateLocalePath();

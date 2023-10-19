@@ -1,10 +1,10 @@
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import { RoutesConfig, LANG_PREFIX } from "./config/routes";
-import { ValidRoutesProviders } from "./providers/validRoutesProviders/validRoutesProviders";
-import { DEFAULT_LOCALE } from "./config/i18n";
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { RoutesConfig, LANG_PREFIX } from './config/routes';
+import { ValidRoutesProviders } from './providers/validRoutesProviders/validRoutesProviders';
+import { DEFAULT_LOCALE } from './config/i18n';
 
-import { Home } from "../routes/home";
-import { RockPaperScissors } from "../routes/rockPaperScissors";
+import { Home } from '../routes/home';
+import { RockPaperScissors } from '../routes/rockPaperScissors';
 
 export const App = () => {
   const { pathname, search } = useLocation();

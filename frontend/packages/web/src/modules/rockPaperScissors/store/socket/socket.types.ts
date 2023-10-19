@@ -1,24 +1,53 @@
-import { ReactNode } from "react";
-import { Socket } from "socket.io-client";
-
 export enum HandlerType {
-  START_GAME = "startGame",
-  OPPONENT_DISCONNECTED = "opponnentDisconnected",
-  ROUND_RESULTS = "roundResult",
-  OPPONNET_READY = "opponentReady",
-  ROOM_IS_AVAILABLE = "roomIsAvailable",
-  ROOM_IS_FULL = "roomIsFull",
-  START_ROUND = "startRound",
-  FINISH_GAME = "finishGame",
+  ROOM_NOT_EXIST = 'roomNotExists',
+  ROOM_IS_FULL = 'roomIsFull',
+  UPDATE_PLAYERS = 'updatePlayers',
+  START_GAME = 'startGame',
+  UPDATE_PICK = 'updatePick',
+  FINISH_ROUND = 'finishRound',
+  FINISH_GAME = 'finishGame',
+  CREATE_ROOM = 'createRoom',
+  PLAYER_LEFT = 'playerLeft'
 }
 
 export enum EmiterType {
-  ADD_TO_ROOM = "addToRoom",
-  MADE_A_PICK = "madeAPick",
-  REMOVE_PICK = "removePick",
-  FINISH_GAME = "finishGame",
-  FINISH_ROUND = "finishRound",
+  JOIN_ROOM = 'joinRoom',
+  MAKE_PICK = 'makePick',
+  LEAVE_ROOM = 'leaveRoom',
+  CREATE_ROOM = "createRoom",
+};
+
+
+export type JoinRoomPayload = {
+  roomId: string;
 }
+
+export type CreatRoomPayload = null;
+
+export type MakePickPayload = {
+  pick: Pick
+}
+
+export type LeaveRoomPayload = null;
+
+
+export type EmiterValMapper<T extends EmiterType> =
+  T extends EmiterType.JOIN_ROOM ? JoinRoomPayload :
+  T extends EmiterType.CREATE_ROOM ? CreatRoomPayload :
+  T extends EmiterType.LEAVE_ROOM ? LeaveRoomPayload :
+  T extends EmiterType.MAKE_PICK ? MakePickPayload :
+  never;
+
+export type AllTogetherImpl<T extends EmiterType = EmiterType> = {
+  type: T;
+  payload: EmiterValMapper<T>;
+}
+
+export type Emiter = EmiterType extends infer U
+  ? U extends EmiterType
+  ? AllTogetherImpl<U>
+  : never
+  : never;
 
 export interface HandlerMessage {
   type: HandlerType;
@@ -27,23 +56,41 @@ export interface HandlerMessage {
   };
 }
 
-export interface EmitterMessage {
-  type: EmiterType;
-  payload: EmiterPayload;
-}
+export type EmitterMessage = Emiter
+
 export type EmiterPayload = {
   [key: string]: any;
 };
+
+export type SocketState = {
+  room?: Room;
+};
+
 export interface Room {
   id: string;
   players: Player[];
-  roomIsAvaible: true;
+  roomIsAvaible: boolean;
   roundIsOver: boolean;
   isGameOver: boolean;
-  roundResults?: { verdict: string; opponentPick: string };
+  roundResults?: RoundResults;
   roomIsFull: boolean;
-  opponentReady: boolean;
 }
+export type RoundResults = {
+  verdict: Verdict;
+  opponentsPick: OpponentPick[]
+}
+
+export type OpponentPick = {
+  id: string,
+  pick: Pick | null
+}
+
+export enum Verdict {
+  LOSE = 'lose',
+  WIN = "win",
+  TIE = 'tie'
+}
+
 
 export interface Player {
   isOptionPicked: boolean;
@@ -69,37 +116,6 @@ export type ClientToServerEvents = {
   rockPaperSicssors: (message: EmitterMessage) => void;
 };
 
-export type SocketState = {
-  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
-  room?: Room;
-};
-
-export type ActionMap<M extends { [index: string]: any }> = {
-  [Key in keyof M]: M[Key] extends undefined
-    ? {
-        type: Key;
-      }
-    : {
-        type: Key;
-        payload: M[Key];
-      };
-};
-
-export enum SocketAction {
-  SET_ROOM = "setRoom",
-}
-
-export type SocketPayload = {
-  [SocketAction.SET_ROOM]: Room;
-};
-
-export type SocketProviderProps = {
-  children: ReactNode;
-};
-
-export type SocketActions =
-  ActionMap<SocketPayload>[keyof ActionMap<SocketPayload>];
-
 export interface Handlers {
   handlers: HandlersSet;
   handle: (data: HandlerMessage) => void;
@@ -110,5 +126,5 @@ export type HandlersSet = {
 };
 
 export interface Handler {
-  handle: (data: HandlerMessage) => void;
+  handle: (data: HandlerMessage, cb: (msg: HandlerMessage) => void) => void;
 }
