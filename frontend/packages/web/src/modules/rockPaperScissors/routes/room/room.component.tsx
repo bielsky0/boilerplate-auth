@@ -1,110 +1,49 @@
-import { useParams } from "react-router-dom";
-import { useSocket } from "../../hooks";
-import { useEffect } from "react";
-import { EmiterType } from "../../store";
-import { Player } from "../../components/player";
+import { useParams } from 'react-router-dom';
+import { useSocket } from '../../hooks';
+import { useEffect } from 'react';
+import { EmiterType } from '../../store';
+import { Player, RoomIsFull, Waiting } from '../../components';
+import { Score } from '../../components/score/score.component';
+import { Controls } from '../../components/controls';
+import { GameField } from '../../components/gameField';
 
 export const Room = () => {
-  const { id } = useParams<{ id: string }>();
-  const { socket, room } = useSocket();
+  const { id } = useParams() as { id: string };
+
+  const {
+    data: { room },
+    sentEvent,
+  } = useSocket();
 
   useEffect(() => {
-    socket.emit("rockPaperSicssors", {
-      type: EmiterType.ADD_TO_ROOM,
-      payload: {
-        roomId: id,
-      },
-    });
-  }, [socket]);
-  useEffect(() => {
-    let timeout: number;
-
-    if (room && room.roundIsOver) {
-      timeout = setTimeout(() => {
-        socket.emit("rockPaperSicssors", {
-          type: EmiterType.FINISH_ROUND,
-          payload: {
-            roomId: room?.id,
-          },
-        });
-      }, 2000);
+    if (!room) {
+      sentEvent({
+        type: EmiterType.JOIN_ROOM,
+        payload: {
+          roomId: id,
+        },
+      });
     }
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [room]);
+  }, []);
 
   if (!room) return null;
 
-  if (room.roomIsAvaible) return <>Send link to friend</>;
+  if (room.roomIsAvaible) return <Waiting />;
 
-  if (room.roomIsFull) return <>room is full</>;
-
-  if (room.roundIsOver)
-    return (
-      <div>
-        <div
-          style={{
-            marginBottom: "32px",
-          }}
-        >
-          {JSON.stringify(room)}
-        </div>
-
-        <h3>Round Over</h3>
-        {JSON.stringify(room.roundResults)}
-      </div>
-    );
-
-  if (room.isGameOver)
-    return (
-      <div>
-        <div
-          style={{
-            marginBottom: "32px",
-          }}
-        >
-          {JSON.stringify(room)}
-        </div>
-
-        <button
-          onClick={() => {
-            socket.emit("rockPaperSicssors", {
-              type: EmiterType.ADD_TO_ROOM,
-              payload: {
-                roomId: id,
-              },
-            });
-          }}
-        >
-          PLAY AGAIN
-        </button>
-      </div>
-    );
+  if (room.roomIsFull) return <RoomIsFull />;
 
   return (
-    <div
-      style={{
-        height: "100vh",
-      }}
-    >
-      <div
-        style={{
-          marginBottom: "32px",
-        }}
-      >
-        {JSON.stringify(room)}
+    <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-[10%]">
+        <Score />
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-        }}
-      >
-        <Player socketId={room.players[0].id} />
-        <Player socketId={room.players[1].id} />
+      <div className="flex flex-col h-[70%]">
+        <GameField />
+      </div>
+
+      <div className="flex flex-col h-[20%]">
+        <Controls />
       </div>
     </div>
   );
