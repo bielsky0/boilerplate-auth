@@ -1,0 +1,1 @@
+export { useInGame } from './useInGame.hook';

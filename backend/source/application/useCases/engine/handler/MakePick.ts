@@ -101,6 +101,10 @@ export class MakePickHandler implements Handler {
 
             // get all players who won
             const winners = getWinners(players);
+
+            // get all players who lost
+            const loosers = getLoosers(players);
+
             // add points to winners
             const winnersWithAddedPoint = winners.map((player) => ({ ...player, score: player.score + 1 }));
 
@@ -117,7 +121,7 @@ export class MakePickHandler implements Handler {
                 const playersWith3OrMorePoints = players.filter(({ score }) => (score >= 3));
                 const playersWithLess3Points = players.filter(({ score }) => (score < 3));
 
-                rooms[index].players = [...winnersWithAddedPoint, ...playersWithLess3Points];
+                rooms[index].players = [...playersWith3OrMorePoints, ...playersWithLess3Points];
 
 
                 this.eventBus.next({
@@ -169,7 +173,6 @@ export class MakePickHandler implements Handler {
                 },
             });
 
-            const loosers = getLoosers(players);
 
             rooms[index].players = [...winnersWithAddedPoint, ...loosers];
 

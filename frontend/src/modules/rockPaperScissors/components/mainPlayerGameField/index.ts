@@ -1,0 +1,1 @@
+export { MainPlayerGameField } from './mainPlayerGameField.component';

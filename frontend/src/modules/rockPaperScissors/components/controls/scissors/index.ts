@@ -1,0 +1,1 @@
+export { Scissors } from './scissors.component';

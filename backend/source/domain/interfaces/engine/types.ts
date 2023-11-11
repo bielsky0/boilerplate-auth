@@ -7,14 +7,14 @@ export enum HandlerType {
 }
 
 export enum EmiterType {
-  ROOM_NOT_EXIST = 'roomNotExists',
-  ROOM_IS_FULL = 'roomIsFull',
-  UPDATE_PLAYERS = 'updatePlayers',
-  START_GAME = 'startGame',
-  UPDATE_PICK = 'updatePick',
-  FINISH_ROUND = 'finishRound',
-  FINISH_GAME = 'finishGame',
-  CREATE_ROOM = 'createRoom',
-  PLAYER_LEFT = 'playerLeft'
+  ROOM_NOT_EXIST = 'onRoomNotExists',
+  ROOM_IS_FULL = 'onRoomIsFull',
+  UPDATE_PLAYERS = 'onUpdatePlayers',
+  START_GAME = 'onStartGame',
+  UPDATE_PICK = 'onUpdatePick',
+  FINISH_ROUND = 'onFinishRound',
+  FINISH_GAME = 'onFinishGame',
+  CREATE_ROOM = 'onCreateRoom',
+  PLAYER_LEFT = 'onPlayerLeft'
 }
 
