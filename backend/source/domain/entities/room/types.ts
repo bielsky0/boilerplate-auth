@@ -1,4 +1,4 @@
-import { Player, SanitizePlayer } from "../player/types";
+import { Pick, Player, SanitizePlayer } from "../player/types";
 
 export type RoomInput = {
   id: string;
@@ -10,19 +10,33 @@ export type RoomInput = {
 export interface Room {
   id: string;
   players: Player[];
-  roomIsAvaible: boolean;
   roundIsOver: boolean;
-  roundResults?: { verdict: string; opponentPick: string };
+  roundResults?: RoundResults;
   roomIsFull: boolean;
-  opponentReady: boolean;
+  isGameOver: boolean;
+  roomIsAvaible: boolean;
 }
-
 export interface SanitizeRoom {
   id: string;
   players: SanitizePlayer[];
-  roomIsAvaible: boolean;
   roundIsOver: boolean;
-  roundResults?: { verdict: string; opponentPick: string };
+  roundResults?: RoundResults;
   roomIsFull: boolean;
-  opponentReady: boolean;
+  isGameOver: boolean;
+}
+
+export type RoundResults = {
+  verdict: Verdict;
+  opponentsPick: OpponentPick[]
+}
+
+export type OpponentPick = {
+  id: string,
+  pick: Pick | null
+}
+
+export enum Verdict {
+  LOSE = 'lose',
+  WIN = "win",
+  TIE = 'tie'
 }

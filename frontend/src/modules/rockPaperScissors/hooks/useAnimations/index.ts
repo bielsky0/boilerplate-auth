@@ -1,0 +1,1 @@
+export { useAnimations } from './useAnimations.hook';

@@ -1,0 +1,1 @@
+export { RoomRedirect } from './roomRedirect.component'
