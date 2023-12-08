@@ -7,6 +7,7 @@ import { makeRedisClient } from "./database/redis";
 export type Dependencies = {
   userRepository: Interfaces.UserReposiotry;
   cacheRepository: Interfaces.CacheRepository;
+  roomRepository: Interfaces.RoomRepository;
 };
 
 export function makeInfrastructure(): Dependencies {
@@ -18,5 +19,6 @@ export function makeInfrastructure(): Dependencies {
   return {
     userRepository: repositories.makeUserRepository({ db }),
     cacheRepository: repositories.makeCacheRepository({ db: redisDb }),
+    roomRepository: repositories.makeRoomRepository({ db: redisDb })
   };
 }

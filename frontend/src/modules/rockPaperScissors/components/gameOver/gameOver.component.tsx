@@ -2,16 +2,16 @@ import { useSocket } from '../../hooks';
 
 export const GameOver = () => {
   const {
-    data: { room },
-    opponents,
-    currentPlayer,
+    data: { gameOver },
+    socket: { id: socketId },
   } = useSocket();
 
-  if (!room) return null;
-  if (!opponents) return null;
-  if (!currentPlayer) return null;
+  const currentPlayer = gameOver.players.find(({ id }) => socketId === id);
+  const currentOpponent = gameOver.players.find(({ id }) => socketId !== id);
+  console.log(gameOver);
 
-  const currentOpponent = opponents[0];
+  if (!currentOpponent) return null;
+  if (!currentPlayer) return null;
 
   return (
     <div className="flex flex-col h-screen">

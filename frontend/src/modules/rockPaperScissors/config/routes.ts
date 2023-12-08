@@ -5,6 +5,6 @@ export const RoutesConfig = {
     home: "",
     roomId: "room/:id",
     room: "room",
-
+    gameOver: 'gameover'
   }),
 };

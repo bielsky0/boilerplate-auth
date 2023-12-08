@@ -5,11 +5,12 @@ import {
 } from "@domain/interfaces/engine/handlers";
 import { Subject } from "rxjs";
 
-import { rooms, sanitizeRoom } from "./CreateRoom";
+import { sanitizeRoom } from "./CreateRoom";
 import { Pick } from "@domain/entities/player/types";
 import { getLoosers, getWinners, isTie } from "@application/services/engine/rockPaperScissors";
 import { EmiterType } from "@domain/interfaces/engine/types";
 import { Verdict } from "@domain/entities/room";
+import { RoomRepository } from "@domain/interfaces";
 
 type Payload = {
     roomId: string;
@@ -19,24 +20,24 @@ type Payload = {
 
 export class MakePickHandler implements Handler {
     eventBus: Subject<EmiterMessage>;
+    roomRepository: RoomRepository;
 
-    constructor(eventBus: Subject<EmiterMessage>) {
+    constructor(eventBus: Subject<EmiterMessage>, roomRepository: RoomRepository) {
         this.eventBus = eventBus;
+        this.roomRepository = roomRepository;
     }
-    handle(message: HandlerMessage) {
+    async handle(message: HandlerMessage) {
         const payload = message.payload as Payload;
 
         console.log('MakePickHandler payload', payload)
 
         const { socketId: currentPlayerId, roomId: currentRoomId } = payload;
 
+        const room = await this.roomRepository.getRoom(currentRoomId);
 
-        const index = rooms.findIndex((room) => room.id === currentRoomId);
+        if (!room) throw Error(`Room ${currentRoomId} dosent exists`);
 
-        if (index < 0) throw Error(`Room ${currentRoomId} dosent exists`);
-
-        const { players } = rooms[index]
-
+        const { players } = room;
 
         const currentPlayer = players.find(
             ({ id }) => id === currentPlayerId
@@ -51,8 +52,6 @@ export class MakePickHandler implements Handler {
             ({ isOptionPicked }) => isOptionPicked
         );
 
-        console.log(players, 'MakePickHandler players')
-
         if (allPlayerPicked) {
 
             //check for tie
@@ -60,15 +59,17 @@ export class MakePickHandler implements Handler {
 
             if (tie) {
                 //send tie results
-                rooms[index].roundIsOver = true;
+                room.roundIsOver = true;
+
+                await this.roomRepository.setRoom(room);
 
                 this.eventBus.next({
                     type: EmiterType.FINISH_ROUND,
                     payload: {
-                        roomId: rooms[index].id,
+                        roomId: room.id,
                         targets: players,
                         room: {
-                            ...sanitizeRoom(rooms[index]),
+                            ...sanitizeRoom(room),
                             // change it
                             roundResults: { verdict: Verdict.TIE, opponentsPick: players.map((player) => ({ id: player.id, pick: player.option })) },
                         },
@@ -77,17 +78,19 @@ export class MakePickHandler implements Handler {
 
 
 
-                setTimeout(() => {
-                    rooms[index].roundIsOver = false;
-                    rooms[index].players = rooms[index].players.map((player) => ({ ...player, option: null, isOptionPicked: false }));
+                setTimeout(async () => {
+                    room.roundIsOver = false;
+                    room.players = room.players.map((player) => ({ ...player, option: null, isOptionPicked: false }));
+
+                    await this.roomRepository.setRoom(room);
 
                     this.eventBus.next({
                         type: EmiterType.START_GAME,
                         payload: {
-                            roomId: rooms[index].id,
+                            roomId: room.id,
                             targets: players,
                             room: {
-                                ...sanitizeRoom(rooms[index]),
+                                ...sanitizeRoom(room),
                                 // change it
                                 roundResults: undefined,
                             },
@@ -114,42 +117,40 @@ export class MakePickHandler implements Handler {
 
             if (checkFor3Points) {
                 // finish game
-                rooms[index].isGameOver = true;
-                rooms[index].roundIsOver = true;
+                room.players = [...winnersWithAddedPoint, ...loosers];
+                room.isGameOver = true;
+                room.roundIsOver = true;
 
                 // get all players with 3 or more points
-                const playersWith3OrMorePoints = players.filter(({ score }) => (score >= 3));
-                const playersWithLess3Points = players.filter(({ score }) => (score < 3));
+                const playersWith3OrMorePoints = room.players.filter(({ score }) => (score >= 3));
+                const playersWithLess3Points = room.players.filter(({ score }) => (score < 3));
 
-                rooms[index].players = [...playersWith3OrMorePoints, ...playersWithLess3Points];
-
+                await this.roomRepository.setRoom(room);
 
                 this.eventBus.next({
                     type: EmiterType.FINISH_GAME,
                     payload: {
-                        roomId: rooms[index].id,
+                        roomId: room.id,
                         targets: [...playersWith3OrMorePoints],
                         room: {
-                            ...sanitizeRoom(rooms[index]),
+                            ...sanitizeRoom(room),
                             // change it
-                            roundResults: { verdict: Verdict.WIN, opponentsPick: players.map((player) => ({ id: player.id, pick: player.option })) },
+                            roundResults: { verdict: Verdict.WIN, opponentsPick: room.players.map((player) => ({ id: player.id, pick: player.option })) },
                         },
                     },
                 });
 
 
                 // get all players with less than 3 points
-
-
                 this.eventBus.next({
                     type: EmiterType.FINISH_GAME,
                     payload: {
-                        roomId: rooms[index].id,
+                        roomId: room.id,
                         targets: [...playersWithLess3Points],
                         room: {
-                            ...sanitizeRoom(rooms[index]),
+                            ...sanitizeRoom(room),
                             // change it
-                            roundResults: { verdict: Verdict.LOSE, opponentsPick: players.map((player) => ({ id: player.id, pick: player.option })) },
+                            roundResults: { verdict: Verdict.LOSE, opponentsPick: room.players.map((player) => ({ id: player.id, pick: player.option })) },
                         },
                     },
                 });
@@ -157,16 +158,18 @@ export class MakePickHandler implements Handler {
                 return;
             }
 
-            rooms[index].roundIsOver = true;
+            room.roundIsOver = true;
+
+            await this.roomRepository.setRoom(room);
 
             // send results
             this.eventBus.next({
                 type: EmiterType.FINISH_ROUND,
                 payload: {
-                    roomId: rooms[index].id,
+                    roomId: room.id,
                     targets: [...winnersWithAddedPoint],
                     room: {
-                        ...sanitizeRoom(rooms[index]),
+                        ...sanitizeRoom(room),
                         // change it
                         roundResults: { verdict: Verdict.WIN, opponentsPick: players.map((player) => ({ id: player.id, pick: player.option })) },
                     },
@@ -174,15 +177,17 @@ export class MakePickHandler implements Handler {
             });
 
 
-            rooms[index].players = [...winnersWithAddedPoint, ...loosers];
+            room.players = [...winnersWithAddedPoint, ...loosers];
+
+            await this.roomRepository.setRoom(room);
 
             this.eventBus.next({
                 type: EmiterType.FINISH_ROUND,
                 payload: {
                     targets: [...loosers],
-                    roomId: rooms[index].id,
+                    roomId: room.id,
                     room: {
-                        ...sanitizeRoom(rooms[index]),
+                        ...sanitizeRoom(room),
                         // change it
                         roundResults: { verdict: Verdict.LOSE, opponentsPick: players.map((player) => ({ id: player.id, pick: player.option })) },
                     },
@@ -190,17 +195,18 @@ export class MakePickHandler implements Handler {
             });
 
 
-            setTimeout(() => {
-                rooms[index].roundIsOver = false;
-                rooms[index].players = rooms[index].players.map((player) => ({ ...player, option: null, isOptionPicked: false }));
+            setTimeout(async () => {
+                room.roundIsOver = false;
+                room.players = room.players.map((player) => ({ ...player, option: null, isOptionPicked: false }));
+                await this.roomRepository.setRoom(room);
 
                 this.eventBus.next({
                     type: EmiterType.START_GAME,
                     payload: {
-                        roomId: rooms[index].id,
+                        roomId: room.id,
                         targets: players,
                         room: {
-                            ...sanitizeRoom(rooms[index]),
+                            ...sanitizeRoom(room),
                             // change it
                             roundResults: undefined,
                         },
@@ -211,14 +217,15 @@ export class MakePickHandler implements Handler {
             return;
         }
 
+        await this.roomRepository.setRoom(room);
+
         this.eventBus.next({
             type: EmiterType.UPDATE_PICK,
             payload: {
                 targets: players,
-                room: sanitizeRoom(rooms[index]),
-                roomId: rooms[index].id
+                room: sanitizeRoom(room),
+                roomId: room.id
             },
         });
-        console.log(message, "MadeAPickHandler");
     }
 }

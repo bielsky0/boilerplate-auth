@@ -20,11 +20,13 @@ export const makeIo = (
 
   const eventBus = new Subject<Message>();
 
+  const { roomRepository } = dependencies
+
   const handlers = new Handlers({
-    [HandlerType.JOIN_ROOM]: new JoinRoomHandler(eventBus),
-    [HandlerType.CREATE_ROOM]: new CreateRoomHandler(eventBus),
-    [HandlerType.LEAVE_ROOM]: new LeaveRoomHandler(eventBus),
-    [HandlerType.MAKE_PICK]: new MakePickHandler(eventBus),
+    [HandlerType.JOIN_ROOM]: new JoinRoomHandler(eventBus, roomRepository),
+    [HandlerType.CREATE_ROOM]: new CreateRoomHandler(eventBus, roomRepository),
+    [HandlerType.LEAVE_ROOM]: new LeaveRoomHandler(eventBus, roomRepository),
+    [HandlerType.MAKE_PICK]: new MakePickHandler(eventBus, roomRepository),
   });
 
   eventBus.subscribe((message) => {
@@ -40,9 +42,9 @@ export const makeIo = (
     }
   });
   io.on("connection", (socket) => {
-    socket.on("rockPaperSicssors", (message) => {
+    socket.on("rockPaperSicssors", async (message) => {
       try {
-        handlers.handle({
+        await handlers.handle({
           ...message,
           payload: {
             ...message.payload,
@@ -54,8 +56,8 @@ export const makeIo = (
       }
     });
 
-    socket.on("disconnect", () => {
-      handlers.handle({
+    socket.on("disconnect", async () => {
+      await handlers.handle({
         type: HandlerType.LEAVE_ROOM,
         payload: {
           socketId: socket.id,

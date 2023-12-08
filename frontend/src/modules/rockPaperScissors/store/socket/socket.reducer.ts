@@ -4,13 +4,11 @@ export const socketReducer = (
   state: SocketState,
   { type, payload }: HandlerMessage | Emiter
 ): SocketState => {
-
-
   switch (type) {
     case HandlerType.CREATE_ROOM:
       return { ...state, room: payload.room };
     case HandlerType.FINISH_GAME:
-      return { ...state, room: payload.room };
+      return { ...state, room: undefined, gameOver: { isGameOver: true, players: payload.room.players } };
     case HandlerType.FINISH_ROUND:
       return { ...state, room: payload.room };
     case HandlerType.PLAYER_LEFT:
@@ -20,7 +18,7 @@ export const socketReducer = (
     case HandlerType.ROOM_NOT_EXIST:
       return { ...state, room: payload.room };
     case HandlerType.START_GAME:
-      return { ...state, room: payload.room };
+      return { ...state, room: payload.room, yourPick: undefined };
     case HandlerType.UPDATE_PICK:
       return { ...state, room: payload.room };
     case HandlerType.UPDATE_PLAYERS:

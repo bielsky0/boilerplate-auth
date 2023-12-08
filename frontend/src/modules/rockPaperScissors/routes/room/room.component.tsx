@@ -12,9 +12,14 @@ export const Room = () => {
   const { id } = useParams() as { id: string };
 
   const {
-    data: { room },
+    data: {
+      room,
+      gameOver: { isGameOver },
+    },
     sentEvent,
   } = useSocket();
+
+  if (isGameOver) return <GameOver />;
 
   useEffect(() => {
     if (!room) {
@@ -29,9 +34,7 @@ export const Room = () => {
 
   if (!room) return null;
 
-  const { roomIsAvaible, roomIsFull, isGameOver } = room;
-
-  if (isGameOver) return <GameOver />;
+  const { roomIsAvaible, roomIsFull } = room;
 
   if (roomIsAvaible) return <Waiting />;
 

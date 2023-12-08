@@ -9,7 +9,9 @@ export function SocketContextProvider({
 }: {
   [key: string]: any;
 }) {
-  const [state, dispatch] = useReducer(socketReducer, {});
+  const [state, dispatch] = useReducer(socketReducer, {
+    gameOver: { isGameOver: false, players: [] },
+  });
 
   const { current } = useRef(new SocketService({ url }));
 

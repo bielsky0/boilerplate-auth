@@ -65,6 +65,7 @@ export type EmiterPayload = {
 
 export type SocketState = {
   room?: Room;
+  gameOver: GameOver;
   yourPick?: Pick;
 };
 
@@ -73,9 +74,13 @@ export interface Room {
   players: Player[];
   roomIsAvaible: boolean;
   roundIsOver: boolean;
-  isGameOver: boolean;
   roundResults?: RoundResults;
   roomIsFull: boolean;
+}
+
+export type GameOver = {
+  players: Player[];
+  isGameOver: boolean;
 }
 export type RoundResults = {
   verdict: Verdict;
