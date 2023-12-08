@@ -1,0 +1,1 @@
+export { Verdict } from './verdict.component';

@@ -6,13 +6,12 @@ import { Room, SanitizeRoom } from "@domain/entities/room/types";
 import { Player, SanitizePlayer } from "@domain/entities/player/types";
 import { EmiterType } from "@domain/interfaces/engine/types";
 import crypto from 'crypto'
+import { RoomRepository } from "@domain/interfaces";
 
 type Payload = {
     roomId: string;
     socketId: string;
 };
-
-export const rooms: Room[] = [];
 
 export const sanitizePlayer = (player: Player): SanitizePlayer => ({
     id: player.id,
@@ -29,13 +28,14 @@ export const sanitizeRoom = (room: Room): SanitizeRoom => ({
 
 export class CreateRoomHandler implements Handler {
     eventBus: Subject<EmiterMessage>;
+    roomRepository: RoomRepository;
 
-    constructor(eventBus: Subject<EmiterMessage>) {
+    constructor(eventBus: Subject<EmiterMessage>, roomRepository: RoomRepository) {
         this.eventBus = eventBus;
+        this.roomRepository = roomRepository;
     }
 
-
-    handle(message: Message) {
+    async handle(message: Message) {
         const payload = message.payload as Payload;
 
         const newRoom: Room = {
@@ -54,7 +54,7 @@ export class CreateRoomHandler implements Handler {
             option: null,
         });
 
-        rooms.push(newRoom);
+        await this.roomRepository.setRoom(newRoom);
 
         this.eventBus.next({
             type: EmiterType.CREATE_ROOM,

@@ -5,27 +5,35 @@ import {
 } from "@domain/interfaces/engine/handlers";
 import { Subject } from "rxjs";
 
-import { rooms, sanitizeRoom } from "./CreateRoom";
+import { sanitizeRoom } from "./CreateRoom";
 import { EmiterType } from "@domain/interfaces/engine/types";
+import { RoomRepository } from "@domain/interfaces";
 
 export class LeaveRoomHandler implements Handler {
     eventBus: Subject<EmiterMessage>;
+    roomRepository: RoomRepository;
 
-    constructor(eventBus: Subject<EmiterMessage>) {
+    constructor(eventBus: Subject<EmiterMessage>, roomRepository: RoomRepository) {
         this.eventBus = eventBus;
+        this.roomRepository = roomRepository;
     }
 
-    handle(message: HandlerMessage) {
+    async handle(message: HandlerMessage) {
         const { socketId: playerId } = message.payload
 
-        const playerRooms = rooms.filter(({ players }) => {
+        const playerRooms = (await this.roomRepository.getAllRooms()).filter(({ players }) => {
             return players.some(({ id }) => id === playerId);
         });
 
-        playerRooms.forEach(({ players }) => {
-            const index = players.indexOf(playerId);
-            players.splice(index, 1);
-        });
+        if (playerRooms.length > 0) {
+            await Promise.all(playerRooms.map(async (room) => {
+                const { players } = room;
+                const index = players.indexOf(playerId);
+                players.splice(index, 1);
+
+                await this.roomRepository.setRoom(room);
+            }));
+        }
 
         playerRooms.forEach((room) => {
             this.eventBus.next({

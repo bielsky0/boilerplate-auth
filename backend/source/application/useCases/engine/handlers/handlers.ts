@@ -11,12 +11,12 @@ export class Handlers implements HandlersAbs {
     this.handlers = handlers;
   }
 
-  handle(message: Message) {
+  async handle(message: Message) {
     console.log(message, "Handlers");
     if (!this.handlers[message.type]) {
       throw new Error("No handler for message");
     }
 
-    this.handlers[message.type].handle(message);
+    await this.handlers[message.type].handle(message);
   }
 }

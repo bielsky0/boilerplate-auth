@@ -1,84 +1,52 @@
-import { useInGame, useSocket } from '../../hooks';
-import { EmiterType, Pick } from '../../store';
+import { useAnimate, motion } from 'framer-motion';
+import { useSocket } from '../../hooks';
 import { Paper } from './paper';
 import { Rock } from './rock';
 import { Scissors } from './scissors';
+import { useEffect } from 'react';
 
 export const Controls = () => {
   const {
-    data: { room },
-    sentEvent,
+    data: { room, yourPick },
   } = useSocket();
 
-  const { makePrePick } = useInGame();
+  const [controlsRef, animateControls] = useAnimate();
+
+  const [ref, animate] = useAnimate();
 
   if (!room) return null;
 
+  useEffect(() => {
+    if (yourPick) {
+      animateControls(controlsRef.current, {
+        y: 200,
+      });
+      animate(ref.current, { opacity: 1 });
+    }
+
+    if (!yourPick) {
+      animate(ref.current, { opacity: 0 });
+      animateControls(controlsRef.current, {
+        y: 0,
+      });
+    }
+  }, [yourPick]);
+
   return (
-    <div className="flex w-full h-full items-center justify-center gap-10">
-      {/* <button
-        className="p-6 rounded-full bg-orange-400"
-        onMouseOver={() => {
-          makePrePick(Pick.ROCK);
-        }}
-        onMouseOut={() => {
-          makePrePick(null);
-        }}
-        onClick={() => {
-          sentEvent({
-            type: EmiterType.MAKE_PICK,
-            payload: {
-              pick: Pick.ROCK,
-              roomId: room?.id,
-            },
-          });
-        }}
+    <div className="relative flex w-full h-full items-center justify-center">
+      <motion.div ref={ref} className="absolute">
+        <span className="text-orange-400 text-5xl font-medium uppercase">
+          you picked
+        </span>
+      </motion.div>
+      <motion.div
+        ref={controlsRef}
+        className="flex w-full h-full items-center justify-center gap-10"
       >
-        rock
-      </button> */}
-      <Rock />
-      <Paper />
-      {/* <button
-        className="p-6 rounded-full bg-orange-400"
-        onMouseOver={() => {
-          makePrePick(Pick.SCISSORS);
-        }}
-        onMouseOut={() => {
-          makePrePick(null);
-        }}
-        onClick={() => {
-          sentEvent({
-            type: EmiterType.MAKE_PICK,
-            payload: {
-              pick: Pick.PAPER,
-              roomId: room?.id,
-            },
-          });
-        }}
-      >
-        paper
-      </button> */}
-      <Scissors />
-      {/* <button
-        onMouseOver={() => {
-          makePrePick(Pick.PAPER);
-        }}
-        onMouseOut={() => {
-          makePrePick(null);
-        }}
-        className="p-6 rounded-full bg-orange-400"
-        onClick={() => {
-          sentEvent({
-            type: EmiterType.MAKE_PICK,
-            payload: {
-              pick: Pick.SCISSORS,
-              roomId: room?.id,
-            },
-          });
-        }}
-      >
-        scissors
-      </button> */}
+        <Rock />
+        <Paper />
+        <Scissors />
+      </motion.div>
     </div>
   );
 };

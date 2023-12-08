@@ -32,7 +32,7 @@ export type UpdatePickPayload = {
   room: SanitizeRoom
 };
 export type FinishRoundPayload = {
-  room: SanitizeRoom
+  room: SanitizeRoom | null
 };
 export type FinishGamePayload = {
   room: SanitizeRoom
