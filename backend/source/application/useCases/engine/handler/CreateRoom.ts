@@ -52,6 +52,7 @@ export class CreateRoomHandler implements Handler {
             score: 0,
             isOptionPicked: false,
             option: null,
+            isWaitingForRoom: false
         });
 
         await this.roomRepository.setRoom(newRoom);

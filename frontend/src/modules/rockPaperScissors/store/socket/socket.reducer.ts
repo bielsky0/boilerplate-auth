@@ -31,6 +31,8 @@ export const socketReducer = (
       return { ...state };
     case EmiterType.CREATE_ROOM:
       return { ...state };
+    case EmiterType.WAIT_FOR_ROOM:
+      return { ...state };
     default:
       throw new Error(`Cannot resolve reducer action type ${type}`);
   }

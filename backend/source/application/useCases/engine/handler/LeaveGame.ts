@@ -21,19 +21,7 @@ export class LeaveRoomHandler implements Handler {
     async handle(message: HandlerMessage) {
         const { socketId: playerId } = message.payload
 
-        const playerRooms = (await this.roomRepository.getAllRooms()).filter(({ players }) => {
-            return players.some(({ id }) => id === playerId);
-        });
-
-        if (playerRooms.length > 0) {
-            await Promise.all(playerRooms.map(async (room) => {
-                const { players } = room;
-                const index = players.indexOf(playerId);
-                players.splice(index, 1);
-
-                await this.roomRepository.setRoom(room);
-            }));
-        }
+        const playerRooms = await this.roomRepository.removePlayer(playerId);
 
         playerRooms.forEach((room) => {
             this.eventBus.next({

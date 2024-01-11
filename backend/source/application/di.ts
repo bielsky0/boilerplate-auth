@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { makeInfrastructure } from "@infrastructure/di";
+import { Dependencies as InfraDependencies } from "@infrastructure/di";
 
 import { makeUsers } from "@application/useCases/user";
 import { makeAuth } from "@application/useCases/auth";
@@ -13,8 +13,7 @@ export type Dependencies = {
   authService: ReturnType<typeof makeAuthService>;
 };
 
-export function makeApplication(): Dependencies {
-  const InfrastructureDependencies = makeInfrastructure();
+export function makeApplication(infraDependencies: InfraDependencies): Dependencies {
 
   const authService = makeAuthService({
     cryptoService: bcrypt,
@@ -26,13 +25,13 @@ export function makeApplication(): Dependencies {
 
   return {
     users: makeUsers({
-      userRepository: InfrastructureDependencies.userRepository,
+      userRepository: infraDependencies.userRepository,
       authService,
     }),
     auth: makeAuth({
-      userRepository: InfrastructureDependencies.userRepository,
+      userRepository: infraDependencies.userRepository,
       authService,
-      cacheRepository: InfrastructureDependencies.cacheRepository,
+      cacheRepository: infraDependencies.cacheRepository,
     }),
     authService,
   };

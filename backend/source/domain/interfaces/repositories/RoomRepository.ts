@@ -18,4 +18,5 @@ export interface RoomRepository {
     getRoom(key: string): Promise<Room | null>;
     removeRoom(key: string): Promise<void>;
     getAllRooms(): Promise<Room[]>;
+    removePlayer(id: string): Promise<Room[]>;
 }

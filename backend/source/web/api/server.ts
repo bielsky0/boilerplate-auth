@@ -4,16 +4,26 @@ import { makeContainer } from "../crosscutting/container";
 import { makeApp } from "./app";
 import { createServer } from "http";
 
-const dependencies = makeContainer();
+async function boot() {
+  try {
+    const dependencies = await makeContainer();
 
-const PORT = Number(process.env.PORT);
+    const PORT = Number(process.env.PORT);
 
-const app = makeApp(dependencies);
+    const app = makeApp(dependencies);
 
-const server = createServer(app);
+    const server = createServer(app);
 
-makeIo(dependencies, server);
+    makeIo(dependencies, server);
 
-server.listen(PORT, function applicationStarted() {
-  console.log("App started on port ", PORT);
-});
+    server.listen(PORT, function applicationStarted() {
+      console.log("App started on port ", PORT);
+    });
+  } catch (err) {
+
+  }
+}
+
+
+
+boot();

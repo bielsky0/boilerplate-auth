@@ -55,6 +55,7 @@ export class JoinRoomHandler implements Handler {
             score: 0,
             isOptionPicked: false,
             option: null,
+            isWaitingForRoom: false,
         });
 
 

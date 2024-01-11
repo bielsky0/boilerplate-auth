@@ -1,4 +1,5 @@
 import { Navigate } from 'react-router-dom';
+
 import { useGenerateLocalePath } from '../../../../shared/hooks/useGenerateLocalePath';
 import { RoutesConfig } from '../../config/routes';
 import { WaitingRoom } from '../waitingRoom';

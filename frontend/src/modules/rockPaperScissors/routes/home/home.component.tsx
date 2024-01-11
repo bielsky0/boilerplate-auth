@@ -18,20 +18,25 @@ export const Home = () => {
         <h1 className="text-orange-400">Scissors</h1>
       </div>
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
+      <div className="flex flex-col gap-4">
         <button
+          onClick={() => {
+            sentEvent({ type: EmiterType.WAIT_FOR_ROOM, payload: null });
+            navigate(generateLocalePath(RoutesConfig.rockPaperSicssors.room));
+          }}
           className="bg-orange-400 uppercase hover:bg-orange-300 text-gray-800 font-semibold py-3 px-5 rounded shadow"
+        >
+          get started
+        </button>
+
+        <button
           onClick={() => {
             sentEvent({ type: EmiterType.CREATE_ROOM, payload: null });
             navigate(generateLocalePath(RoutesConfig.rockPaperSicssors.room));
           }}
+          className="bg-orange-400 uppercase hover:bg-orange-300 text-gray-800 font-semibold py-3 px-5 rounded shadow"
         >
-          get started
+          create a room
         </button>
       </div>
     </div>
