@@ -22,6 +22,7 @@ export type BasePayload<T> = T & {
 }
 export type RoomNotExistsPayload = { roomId: string };
 export type RoomIsFullPayload = { roomId: string };
+
 export type UpdatePlayersPayload = {
   room: SanitizeRoom
 };

@@ -15,14 +15,16 @@ export enum EmiterType {
   MAKE_PICK = 'makePick',
   LEAVE_ROOM = 'leaveRoom',
   CREATE_ROOM = "createRoom",
+  WAIT_FOR_ROOM = 'waitForRoom'
 };
-
 
 export type JoinRoomPayload = {
   roomId: string;
 }
 
-export type CreatRoomPayload = null;
+export type CreateRoomPayload = null;
+
+export type WaitForRoomPayload = null;
 
 export type MakePickPayload = {
   pick: Pick;
@@ -31,12 +33,12 @@ export type MakePickPayload = {
 
 export type LeaveRoomPayload = null;
 
-
 export type EmiterValMapper<T extends EmiterType> =
   T extends EmiterType.JOIN_ROOM ? JoinRoomPayload :
-  T extends EmiterType.CREATE_ROOM ? CreatRoomPayload :
+  T extends EmiterType.CREATE_ROOM ? CreateRoomPayload :
   T extends EmiterType.LEAVE_ROOM ? LeaveRoomPayload :
   T extends EmiterType.MAKE_PICK ? MakePickPayload :
+  T extends EmiterType.WAIT_FOR_ROOM ? WaitForRoomPayload :
   never;
 
 export type AllTogetherImpl<T extends EmiterType = EmiterType> = {

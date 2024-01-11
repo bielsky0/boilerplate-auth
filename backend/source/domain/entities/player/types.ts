@@ -10,6 +10,7 @@ export interface Player {
   isOptionPicked: boolean;
   score: number;
   id: string;
+  isWaitingForRoom: boolean;
 }
 
 export interface SanitizePlayer {

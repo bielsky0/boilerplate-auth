@@ -19,8 +19,6 @@ export const Room = () => {
     sentEvent,
   } = useSocket();
 
-  if (isGameOver) return <GameOver />;
-
   useEffect(() => {
     if (!room) {
       sentEvent({
@@ -35,6 +33,8 @@ export const Room = () => {
   if (!room) return null;
 
   const { roomIsAvaible, roomIsFull } = room;
+
+  if (isGameOver) return <GameOver />;
 
   if (roomIsAvaible) return <Waiting />;
 

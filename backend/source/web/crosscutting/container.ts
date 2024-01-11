@@ -9,9 +9,14 @@ import {
 
 export type Dependencies = InfrastructureDependencies & AppDependencies;
 
-export function makeContainer() {
+export async function makeContainer() {
+
+  const infra = await makeInfrastructure();
+
+  const app = makeApplication(infra)
+
   return {
-    ...makeInfrastructure(),
-    ...makeApplication(),
+    ...infra,
+    ...app,
   } as Dependencies;
 }

@@ -3,7 +3,9 @@ export enum HandlerType {
   JOIN_ROOM = 'joinRoom',
   MAKE_PICK = 'makePick',
   LEAVE_ROOM = 'leaveRoom',
+  LEAVE_QUEUE = 'leaveQueue',
   CREATE_ROOM = "createRoom",
+  WAIT_FOR_ROOM = 'waitForRoom'
 }
 
 export enum EmiterType {

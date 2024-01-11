@@ -4,28 +4,24 @@ import { RedisClientType } from "@infrastructure/database/redis";
 
 export type MakeRoomRepositoryDependencies = {
     db: RedisClientType;
+    roomPrefix: string
 };
 
 export const makeRoomRepository = ({
     db,
+    roomPrefix
 }: MakeRoomRepositoryDependencies): RoomRepository => {
-    const roomPrefix = 'rooms:rockPaperScissors' as const;
 
     return {
         async setRoom(value: Room) {
-            await db.connect();
 
             await db.hSet(roomPrefix, value.id, JSON.stringify(value));
 
-            await db.quit();
         },
 
         async getRoom(key: string) {
-            await db.connect();
 
             const room = await db.hGet(roomPrefix, key);
-
-            await db.quit();
 
             if (!room) return null;
 
@@ -33,19 +29,11 @@ export const makeRoomRepository = ({
         },
         async getAllRooms() {
             try {
-                await db.connect();
-
-                console.log('getAllRooms');
-
-                console.log(await db.type(roomPrefix));
 
                 const rooms = await db.hGetAll(roomPrefix);
 
-                console.log(rooms, 'rooms')
-
                 const parsedRooms = Object.values(rooms).map((unparsedRoom) => JSON.parse(unparsedRoom) as Room);
 
-                await db.quit();
 
                 return parsedRooms
             } catch (err) {
@@ -54,11 +42,41 @@ export const makeRoomRepository = ({
             }
         },
         async removeRoom(key: string) {
-            await db.connect();
 
             await db.hDel(roomPrefix, key);
 
-            await db.quit();
         },
+        async removePlayer(playerId: string) {
+
+            const rooms = await db.hGetAll(roomPrefix);
+
+            const parsedRooms = Object.values(rooms).map((unparsedRoom) => JSON.parse(unparsedRoom) as Room);
+
+            const playerRooms = parsedRooms.filter(({ players }) => {
+                return players.some(({ id }) => id === playerId);
+            });
+
+            if (playerRooms.length > 0) {
+
+                await Promise.all(playerRooms.map(async (room) => {
+                    const { players, id } = room;
+                    const index = players.findIndex((player) => player.id === playerId);
+                    if (index > -1) {
+                        players.splice(index, 1);
+
+                        if (players.length < 2) {
+                            room.roomIsAvaible = true;
+                            room.roomIsFull = false;
+                        }
+
+                        await db.hSet(roomPrefix, id, JSON.stringify(room));
+                    }
+
+                }));
+            }
+
+
+            return playerRooms;
+        }
     };
 };
