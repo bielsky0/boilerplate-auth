@@ -20,19 +20,8 @@ export const OpponentField = () => {
 
   const { idleAnimation, shakeAnimation, handRef, armRef } = useAnimations();
 
-  if (!room) return null;
-
-  if (!opponents || opponents.length < 1) return null;
-
-  const { roundIsOver, roundResults } = room;
-  const currentOpponent = opponents[0];
-
-  const currentOponentPick = roundResults?.opponentsPick.find(
-    (s) => s.id === currentOpponent.id
-  );
-
   useEffect(() => {
-    if (roundIsOver) {
+    if (room?.roundIsOver) {
       shakeAnimation().then(() => {
         if (currentOponentPick) {
           switch (currentOponentPick.pick) {
@@ -52,11 +41,21 @@ export const OpponentField = () => {
       });
     }
 
-    if (!roundIsOver) {
+    if (!room?.roundIsOver) {
       idleAnimation();
       setSrc(rockHuman);
     }
-  }, [roundIsOver]);
+  }, [room?.roundIsOver, room]);
+
+  if (!room) return null;
+
+  if (!opponents || opponents.length < 1) return null;
+
+  const currentOpponent = opponents[0];
+
+  const currentOponentPick = room.roundResults?.opponentsPick.find(
+    (s) => s.id === currentOpponent.id
+  );
 
   return (
     <div className="relative w-full h-full flex items-center justify-center transform scale-x-[-1]">

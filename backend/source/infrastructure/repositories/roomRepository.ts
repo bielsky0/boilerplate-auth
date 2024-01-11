@@ -64,6 +64,11 @@ export const makeRoomRepository = ({
                     if (index > -1) {
                         players.splice(index, 1);
 
+                        if (players.length < 2) {
+                            room.roomIsAvaible = true;
+                            room.roomIsFull = false;
+                        }
+
                         await db.hSet(roomPrefix, id, JSON.stringify(room));
                     }
 
